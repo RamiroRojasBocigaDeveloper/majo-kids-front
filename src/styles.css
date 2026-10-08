@@ -1,0 +1,377 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+@import "@angular/material/prebuilt-themes/pink-bluegrey.css";
+
+:root {
+  --primary-pink: #d81b60; 
+  --premium-accent: #ff2d81;
+  --luxury-magenta: #6a1b9a;
+  --deep-rose: #ad1457;
+  --bg-main: #fffafc; /* Una pizca de rosa, muy profesional */
+  --bg-card: #ffffff;
+  --dark-text: #1a1a1a; /* Más oscuro para máximo contraste */
+  --subtle-text: #5f6368;
+  --placeholder-text: rgba(0, 0, 0, 0.4);
+  --border-color: rgba(216, 27, 96, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --luxury-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  
+  --vibrant-gradient: linear-gradient(135deg, #d81b60 0%, #ff2d81 100%);
+  --soft-gradient: linear-gradient(135deg, #fffafc 0%, #ffffff 100%);
+  --light-pink: rgba(216, 27, 96, 0.05);
+  --header-bg: #fdf2f8;
+  --pill-text: #ad1457;
+  --secondary-brown: #8d6e63;
+}
+
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  font-family: 'Outfit', sans-serif; /* Tipografía Premium */
+  color: var(--dark-text);
+  background-color: var(--bg-main); 
+}
+
+/* REGLA GLOBAL PARA INPUTS: Forzar texto oscuro */
+input, textarea, select {
+  color: #5d4037 !important;
+  -webkit-text-fill-color: #5d4037 !important;
+}
+
+/* FIX CRÍTICO: Texto del valor seleccionado en mat-select (el que queda visible en el campo) */
+.mat-mdc-select-value,
+.mat-mdc-select-value-text,
+.mat-mdc-select-trigger,
+.mat-mdc-select-min-line,
+span.mat-mdc-select-value-text span {
+  color: #5d4037 !important;
+  -webkit-text-fill-color: #5d4037 !important;
+}
+
+/* FIX: Placeholder del mat-select cuando no hay valor seleccionado */
+.mat-mdc-select-placeholder {
+  color: rgba(0, 0, 0, 0.4) !important;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* FIX: Flecha/icono del mat-select */
+.mat-mdc-select-arrow svg {
+  fill: var(--deep-rose) !important;
+}
+
+/* Estilizar el borde real de Material (Notched Outline) - LIMPIEZA TOTAL */
+.mdc-notched-outline__leading,
+.mdc-notched-outline__notch,
+.mdc-notched-outline__trailing {
+  border: none !important; /* Desactivamos los segmentos de Material */
+}
+
+/* Usar el wrapper como el único borde para evitar "líneas fantasmas" */
+.mat-mdc-text-field-wrapper {
+  background-color: var(--bg-card) !important;
+  border-radius: 16px !important;
+  border: 1px solid var(--border-color) !important;
+  transition: all 0.3s ease;
+  overflow: visible !important; /* Permitir que el label flote hacia afuera */
+}
+
+/* OCULTAR PLACEHOLDER EN REPOSO: Evita solapamiento con el label */
+.mat-mdc-form-field:not(.mat-mdc-form-field-should-float) .mat-mdc-input-element::placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
+  border-color: var(--primary-pink) !important;
+  border-width: 2px !important;
+  box-shadow: 0 0 0 4px rgba(216, 27, 96, 0.05) !important;
+}
+
+/* ELIMINAR LA LÍNEA VERTICAL QUE CRUZA EL ICONO: Ya no es necesaria por la unificación del wrapper */
+.mat-mdc-form-field-appearance-outline .mdc-notched-outline__leading {
+  width: 0 !important;
+}
+
+/* ELIMINAR LÍNEA DE ENFOQUE (FOCUS INDICATOR) */
+.mat-mdc-form-field-focus-indicator {
+  display: none !important;
+}
+
+/* FIX PARA ICONOS: Dar espacio para que no choquen con el texto */
+.mat-mdc-form-field-icon-prefix {
+  padding-right: 8px !important;
+  color: var(--deep-rose) !important;
+}
+
+.mat-mdc-form-field-has-icon-prefix .mdc-floating-label {
+  left: 42px !important;
+}
+
+.mat-mdc-form-field-has-icon-prefix .mdc-floating-label--float-above {
+  left: 12px !important; /* Vuelve a la muesca al subir */
+}
+
+/* FIX PARA BORDES SOBREPUESTOS (MDC NOTCH DINÁMICO) */
+.mat-mdc-form-field.mat-form-field-should-float .mdc-notched-outline__notch {
+  border-top: none !important; /* Solo se abre cuando el label flota */
+}
+
+/* Etiquetas siempre visibles con contraste */
+.mdc-floating-label {
+  color: var(--subtle-text) !important;
+}
+
+/* Forzar que el label flote por ENCIMA del borde superior */
+.mdc-floating-label--float-above {
+  background-color: var(--bg-card) !important;
+  color: var(--primary-pink) !important;
+  padding: 0 10px !important;
+  z-index: 50 !important;
+  transform: translateY(-1.2rem) scale(0.8) !important; /* Más arriba para "cortar" el borde */
+  font-weight: 800 !important;
+  letter-spacing: 0.5px;
+}
+
+/* Si hay icono, el label debe empezar después del icono incluso al flotar */
+.mat-mdc-form-field-has-icon-prefix .mdc-floating-label--float-above {
+  left: 40px !important;
+}
+
+/* Ajustar el padding interno para que el texto no choque con los iconos */
+.mat-mdc-text-field-wrapper .mat-mdc-form-field-flex {
+  padding-top: 8px !important;
+}
+
+.mat-focused .mdc-floating-label {
+  color: var(--primary-pink) !important;
+}
+
+/* Forzar que los títulos de cards y h1 sean constantes */
+h1, mat-card-title, .card-title {
+  color: var(--primary-pink) !important;
+  font-weight: 800 !important;
+  font-family: 'Outfit', sans-serif !important;
+  letter-spacing: -1px !important;
+  margin: 0 !important;
+}
+
+h1 {
+  font-size: 28px !important;
+}
+
+/* Tablas Premium */
+.mat-mdc-header-cell {
+  color: var(--primary-pink) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 11px !important;
+  background-color: var(--header-bg) !important;
+  color: var(--pill-text) !important;
+}
+
+.mat-mdc-cell {
+  color: var(--dark-text) !important;
+  font-size: 14px !important;
+}
+
+/* Forzar fondos claros en las filas para evitar temas oscuros accidentales */
+.mat-mdc-table {
+  background-color: white !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+.mat-mdc-row {
+  background-color: white !important;
+  border-bottom: 1px solid rgba(0,0,0,0.03) !important;
+}
+.mat-mdc-row:hover {
+  background-color: rgba(216, 27, 96, 0.02) !important;
+}
+
+/* FIX: Contraste para Chips (Roles y Etiquetas) */
+.mat-mdc-chip-set .mat-mdc-chip {
+  --mdc-chip-label-text-color: var(--dark-text);
+}
+
+.mat-mdc-chip.mat-primary, 
+.mat-mdc-chip[color="primary"] {
+  --mdc-chip-elevated-container-color: var(--primary-pink) !important;
+  --mdc-chip-label-text-color: #ffffff !important;
+  background-color: var(--primary-pink) !important;
+  color: #ffffff !important;
+}
+
+.mat-mdc-chip.mat-warn,
+.mat-mdc-chip[color="warn"] {
+  --mdc-chip-elevated-container-color: #f44336 !important;
+  --mdc-chip-label-text-color: #ffffff !important;
+  background-color: #f44336 !important;
+  color: #ffffff !important;
+}
+
+.status-active { color: #2e7d32 !important; font-weight: 700; }
+.status-inactive { color: #d32f2f !important; font-weight: 700; }
+
+/* REGLAS DE CLARIDAD (Basadas en Categorías) */
+.header-card {
+  border-radius: 20px !important;
+  padding: 15px 25px !important;
+  border: none !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02) !important;
+  background: white !important;
+  margin-bottom: 20px !important;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content p {
+  color: var(--secondary-brown);
+  margin: 5px 0 0 0;
+  font-size: 14px;
+}
+
+.luxury-pill {
+  background-color: var(--light-pink) !important;
+  color: var(--pill-text) !important;
+  padding: 6px 14px !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  display: inline-block !important;
+}
+
+/* Forzar que mat-chips hereden el estilo de pill si no tienen color sólido */
+.mat-mdc-chip {
+  --mdc-chip-elevated-container-color: var(--light-pink) !important;
+  --mdc-chip-label-text-color: var(--pill-text) !important;
+}
+
+/* Forzar bordes delgados y FONDO CLARO en todos los layouts (Fix para tema oscuro de Material) */
+mat-card.luxury-card, 
+mat-card.table-card, 
+mat-card.pink-card,
+mat-card.total-card,
+.mat-mdc-card {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--luxury-shadow) !important;
+  color: var(--dark-text) !important;
+}
+
+/* Limpieza de sombras y elevaciones por defecto de Material */
+.mdc-card {
+  background-color: var(--bg-card) !important;
+}
+
+/* FIX CRÍTICO: Fondo de Diálogos (Material Dialogs) */
+.cdk-overlay-pane .mat-mdc-dialog-container .mdc-dialog__surface,
+.mat-mdc-dialog-container .mdc-dialog__surface,
+.mat-mdc-dialog-surface,
+.mdc-dialog__surface {
+  background-color: var(--bg-card) !important;
+  color: var(--dark-text) !important;
+  border-radius: 24px !important;
+  box-shadow: var(--luxury-shadow) !important;
+}
+
+.mat-mdc-dialog-content {
+  color: var(--dark-text) !important;
+}
+
+.mat-mdc-dialog-title {
+  color: var(--primary-pink) !important;
+  font-weight: 800 !important;
+}
+
+/* FIX: Fondos Oscuros en Paneles Desplegables (Autocomplete y Select) */
+.mat-mdc-autocomplete-panel,
+.mat-mdc-select-panel,
+.mdc-menu-surface.mat-mdc-select-panel,
+.cdk-overlay-pane .mdc-menu-surface {
+  background-color: var(--bg-card) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--luxury-shadow) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.mat-mdc-option .mdc-list-item__primary-text {
+  color: var(--dark-text) !important;
+}
+
+.mat-mdc-option:hover:not(.mdc-list-item--disabled),
+.mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-multiple):not(.mdc-list-item--disabled) {
+  background-color: var(--light-pink) !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text {
+  color: var(--primary-pink) !important;
+  font-weight: 700 !important;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--light-pink);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-pink);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-pink);
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN (SOLO CONSULTA / MOBILE FIXES)
+   ========================================================= */
+@media (max-width: 768px) {
+  /* Hacer que el contenedor de las tarjetas pueda hacer scroll horizontal */
+  mat-card-content, .mat-mdc-card-content {
+    overflow-x: auto !important;
+    padding-bottom: 10px !important; /* Espacio para la barra de scroll */
+  }
+
+  /* Forzar un ancho mínimo a las tablas para que no se apachurren; esto obligará el scroll horizontal */
+  table.mat-mdc-table {
+    min-width: 700px !important; 
+  }
+
+  /* Cabeceras: Apilar elementos en móviles */
+  .header-content {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .header-content .actions-group {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+  }
+
+  /* Ajustar botones y campos en móvil */
+  .header-content button, .header-content .mat-mdc-form-field {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* Reducir márgenes de tarjetas en móviles */
+  .header-card, .luxury-card {
+    margin: 10px !important;
+    padding: 15px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Reducir tamaño de fuente de cabeceras en móviles */
+  h1 {
+    font-size: 22px !important;
+  }
+}

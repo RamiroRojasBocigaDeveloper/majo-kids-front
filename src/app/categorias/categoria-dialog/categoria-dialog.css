@@ -1,0 +1,28 @@
+.dialog-form {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    min-width: 350px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+h2 {
+    color: var(--primary-pink);
+    font-weight: 800;
+}
+
+mat-dialog-actions {
+    padding: 15px 24px !important;
+}
+
+button[color="primary"] {
+    background: var(--vibrant-gradient) !important;
+    color: white !important;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+    border-radius: 20px !important;
+}
