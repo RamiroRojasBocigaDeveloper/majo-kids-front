@@ -35,7 +35,7 @@ import { MatIconModule } from '@angular/material/icon';
         <div class="form-grid">
           
           <div class="image-upload-container">
-            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" capture="environment" style="display: none;">
+            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display: none;">
             
             <div class="image-preview" *ngIf="form.get('imagenUrl')?.value">
               <img [src]="form.get('imagenUrl')?.value" class="preview-img">
