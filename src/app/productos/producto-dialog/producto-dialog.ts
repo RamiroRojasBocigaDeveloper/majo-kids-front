@@ -35,16 +35,23 @@ import { MatIconModule } from '@angular/material/icon';
         <div class="form-grid">
           
           <div class="image-upload-container">
-            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+            <input type="file" #galleryInput (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+            <input type="file" #cameraInput (change)="onFileSelected($event)" accept="image/*" capture="environment" style="display: none;">
             
             <div class="image-preview" *ngIf="form.get('imagenUrl')?.value">
               <img [src]="form.get('imagenUrl')?.value" class="preview-img">
             </div>
 
-            <button mat-stroked-button color="primary" type="button" (click)="fileInput.click()" [disabled]="uploading" class="upload-btn">
-              <mat-icon>{{ form.get('imagenUrl')?.value ? 'cameraswitch' : 'add_a_photo' }}</mat-icon> 
-              {{ form.get('imagenUrl')?.value ? 'Cambiar Foto / Tomar Otra' : 'Tomar Foto / Subir Imagen' }}
-            </button>
+            <div class="upload-buttons">
+              <button mat-stroked-button color="primary" type="button" (click)="cameraInput.click()" [disabled]="uploading" class="upload-btn">
+                <mat-icon>photo_camera</mat-icon>
+                Tomar Foto
+              </button>
+              <button mat-stroked-button color="primary" type="button" (click)="galleryInput.click()" [disabled]="uploading" class="upload-btn">
+                <mat-icon>photo_library</mat-icon>
+                Subir de Galería
+              </button>
+            </div>
             <div *ngIf="uploading" class="uploading-text">
               <mat-icon class="spinner">sync</mat-icon> Subiendo imagen...
             </div>
@@ -117,7 +124,8 @@ import { MatIconModule } from '@angular/material/icon';
     .image-upload-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; align-items: center; background: rgba(216, 27, 96, 0.03); padding: 16px; border-radius: 16px; border: 1px dashed var(--primary-pink); }
     .image-preview { width: 100%; display: flex; justify-content: center; }
     .preview-img { max-width: 150px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid white; object-fit: cover; }
-    .upload-btn { width: 100%; font-weight: 600; padding: 6px 0; border-width: 2px; }
+    .upload-buttons { display: flex; gap: 8px; width: 100%; }
+    .upload-btn { flex: 1; font-weight: 600; padding: 6px 0; border-width: 2px; }
     .uploading-text { display: flex; align-items: center; gap: 8px; color: var(--primary-pink); font-weight: 500; font-size: 14px; margin-top: 4px; }
     .spinner { animation: spin 1s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
