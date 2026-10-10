@@ -1,14 +1,22 @@
 .login-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  /* flex-start + margin:auto en la tarjeta: centra cuando hay espacio y
+     nunca recorta el borde superior cuando el contenido no cabe */
+  align-items: flex-start;
+  min-height: 100vh;
+  height: auto;
+  box-sizing: border-box;
+  padding: 40px 16px;
   background:
     radial-gradient(ellipse at 78% 18%, rgba(255, 138, 180, 0.14) 0%, transparent 42%),
     radial-gradient(ellipse at 10% 90%, rgba(140, 20, 69, 0.50) 0%, transparent 50%),
     linear-gradient(135deg, #2b0513 0%, #4d0c26 55%, #1f0410 100%);
   position: relative;
-  overflow: hidden;
+  /* Antes era overflow:hidden con height:100vh: el card y el alert de error
+     se cortaban cuando no cabían en la pantalla */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .login-container::before {
@@ -39,6 +47,8 @@
 .login-card {
   width: 100%;
   max-width: 420px;
+  margin: auto; /* centra dentro del flex sin recortar si el contenido desborda */
+  flex: 0 0 auto;
   padding: 50px 40px;
   border-radius: 40px;
   box-shadow: 
@@ -118,22 +128,46 @@ mat-form-field {
 }
 
 .error-alert {
-  background-color: #fff5f5;
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 25px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffecec 100%);
   border: 1px solid #feb2b2;
+  border-left: 4px solid #e53e3e;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin: 0 0 22px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
   color: #c53030;
   font-size: 14px;
   font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-shadow: 0 4px 14px rgba(197, 48, 48, 0.10);
   animation: fadeIn 0.3s ease-out;
 }
 
+/* Sin flex-shrink el ícono se encoge y se ve "cortado" cuando el texto hace wrap */
 .error-alert mat-icon {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  font-size: 22px;
+  line-height: 22px;
   color: #e53e3e;
+  margin-top: 1px;
+}
+
+.error-alert span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* styles.css mete overflow-x:auto en mat-card-content <=768px; dentro de la
+   tarjeta de login eso genera scroll horizontal y "corta" el alert de error */
+.login-card .mat-mdc-card-content {
+  overflow-x: visible !important;
+  padding-bottom: 0 !important;
 }
 
 @keyframes fadeIn {

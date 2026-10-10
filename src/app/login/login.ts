@@ -68,16 +68,29 @@ export class Login {
         },
         error: (err) => {
           this.loading = false;
-          
-          let message = 'Credenciales incorrectas. Por favor, verifica tu correo y contraseña.';
-          if (err.status === 0) message = 'No se pudo conectar con el servidor. Verifica tu conexión.';
-          if (err.status === 500) message = 'Error interno del servidor. Inténtalo más tarde.';
-          
-          this.errorMessage.set(message);
-          
+          this.errorMessage.set(this.mensajeError(err));
           this.cdr.detectChanges(); // Asegurar que el Signal actualice la vista
         }
       });
+    }
+  }
+
+  private mensajeError(err: any): string {
+    switch (err?.status) {
+      case 0:
+        return 'No se pudo conectar con el servidor. Verifica tu conexión e inténtalo de nuevo.';
+      case 401:
+        return 'Credenciales incorrectas. Por favor, verifica tu correo y contraseña.';
+      case 429:
+        return err?.error?.message || 'Demasiados intentos fallidos. Espera unos minutos y vuelve a intentarlo.';
+      case 500:
+        return 'Error interno del servidor. Inténtalo más tarde.';
+      case 502:
+      case 503:
+      case 504:
+        return 'El servidor no está disponible en este momento (puede estar iniciando). Espera unos segundos y vuelve a intentarlo.';
+      default:
+        return 'No se pudo iniciar sesión. Inténtalo de nuevo en unos minutos.';
     }
   }
 }
