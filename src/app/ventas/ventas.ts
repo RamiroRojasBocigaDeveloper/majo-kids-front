@@ -24,6 +24,7 @@ import { AuthService } from '../auth/auth';
 import { SesionTrabajoService, SesionTrabajo } from '../sesiones-trabajo/sesion-trabajo';
 import { UsuarioService, Usuario } from '../usuarios/usuario';
 import { SuccessDialog } from '../shared/success-dialog';
+import { ReciboVentaDialog } from './recibo-venta-dialog';
 import { ToastService } from '../shared/toast.service';
 import { ImagePreviewDialog } from '../shared/image-preview-dialog';
 import { ResumenCierreDialog } from '../sesiones-trabajo/sesiones-trabajo';
@@ -885,21 +886,32 @@ export class Ventas implements OnInit {
       : this.ventaService.procesarVenta(request);
 
     obs.subscribe({
-      next: () => {
-        let msg = this.editMode() ? 'La venta se ha actualizado correctamente.' : 'La venta se ha registrado correctamente.';
-        if (agotados.length > 0) {
-          msg += ` ⚠️ ATENCIÓN: Poner en reposición: ${agotados.join(', ')}`;
+      next: (res: any) => {
+        if (this.editMode()) {
+          this.dialog.open(SuccessDialog, {
+            width: '420px',
+            data: {
+              icon: '🛍️',
+              title: '¡Venta Actualizada!',
+              message: 'La venta se ha actualizado correctamente.'
+            }
+          });
+        } else {
+          this.dialog.open(ReciboVentaDialog, {
+            width: '400px',
+            data: {
+              venta: res,
+              efectivoRecibido: this.metodoSeleccionadoEsEfectivo() && this.recibidoNumerico() > 0
+                ? this.recibidoNumerico()
+                : null
+            }
+          });
         }
 
-        this.dialog.open(SuccessDialog, {
-          width: '420px',
-          data: { 
-            icon: '🛍️',
-            title: this.editMode() ? '¡Venta Actualizada!' : '¡Venta Exitosa!', 
-            message: msg 
-          }
-        });
-        
+        if (agotados.length > 0) {
+          this.toast.warning(`Poner en reposición: ${agotados.join(', ')}`, 'Stock agotado');
+        }
+
         this.carrito.set([]);
         this.efectivoRecibido = null;
         this.loading = false;
