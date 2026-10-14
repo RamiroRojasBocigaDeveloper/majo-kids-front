@@ -72,7 +72,7 @@ export interface ReciboVentaData {
         <div class="divider"></div>
 
         <div class="footer">
-          <div class="gracias">¡Gracias por su compra!</div>
+          <div class="gracias">Gracias por tu compra</div>
           <div class="marca">MajoKids</div>
         </div>
       </div>
