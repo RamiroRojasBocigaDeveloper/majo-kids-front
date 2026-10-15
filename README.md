@@ -2,6 +2,24 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.2.
 
+## Ramas de Git
+
+| Rama | Uso |
+|---|---|
+| `develop` | Rama de **desarrollo**. Aquí se trabaja y se prueban los cambios. |
+| `main` | Rama de **producción**. Render redespliega automáticamente con cada push a `main`. |
+
+Flujo habitual: trabajar en `develop` → probar → hacer merge (o PR) a `main` → push → Render redespliega.
+
+```
+develop  ──▶  main  ──▶  Render (producción)
+```
+
+## URLs de producción
+
+- Frontend (Render): https://majo-kids-front.onrender.com
+- Backend (Render): https://majo-kids-auth.onrender.com
+
 ## Development server
 
 To start a local development server, run:
