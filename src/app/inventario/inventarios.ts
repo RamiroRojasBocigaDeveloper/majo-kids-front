@@ -18,6 +18,7 @@ import { InventarioDialog } from './inventario-dialog/inventario-dialog';
 import { ProductoDialog } from '../productos/producto-dialog/producto-dialog';
 import { ImagePreviewDialog } from '../shared/image-preview-dialog';
 import { ToastService } from '../shared/toast.service';
+import { mensajeErrorHttp } from '../shared/http-error';
 import { AuthService } from '../auth/auth';
 
 @Component({
@@ -357,8 +358,8 @@ export class Inventarios implements OnInit {
         this.productos.set(data);
         this.loading = false;
       },
-      error: () => {
-        this.toast.error('No se pudo cargar el inventario.', 'Error');
+      error: (err) => {
+        this.toast.error(mensajeErrorHttp(err, 'No se pudo cargar el inventario.'), 'Error');
         this.loading = false;
       }
     });
@@ -388,7 +389,7 @@ export class Inventarios implements OnInit {
             this.cargarProductos();
           },
           error: (err) => {
-            this.toast.error(err.error?.message || 'No se pudo registrar el movimiento', 'Error');
+            this.toast.error(mensajeErrorHttp(err, 'No se pudo registrar el movimiento'), 'Error');
           }
         });
       }
@@ -410,8 +411,7 @@ export class Inventarios implements OnInit {
               this.cargarProductos();
             },
             error: (err) => {
-              const msg = err.error?.message || err.error || 'No se pudo actualizar el producto';
-              this.toast.error(msg, 'Error');
+              this.toast.error(mensajeErrorHttp(err, 'No se pudo actualizar el producto'), 'Error');
             }
           });
         } else {
@@ -421,8 +421,7 @@ export class Inventarios implements OnInit {
               this.cargarProductos();
             },
             error: (err) => {
-              const msg = err.error?.message || err.error || 'No se pudo crear el producto';
-              this.toast.error(msg, 'Error');
+              this.toast.error(mensajeErrorHttp(err, 'No se pudo crear el producto'), 'Error');
             }
           });
         }

@@ -12,6 +12,7 @@ import { ProductoService, Producto } from './producto';
 import { ProductoDialog } from './producto-dialog/producto-dialog';
 import { SuccessDialog } from '../shared/success-dialog';
 import { ToastService } from '../shared/toast.service';
+import { mensajeErrorHttp } from '../shared/http-error';
 
 @Component({
   selector: 'app-productos',
@@ -164,8 +165,8 @@ export class Productos implements OnInit {
         this.productos.set(data);
         this.loading = false;
       },
-      error: () => {
-        this.toast.error('No se pudo cargar el catálogo de productos.', 'Error');
+      error: (err) => {
+        this.toast.error(mensajeErrorHttp(err, 'No se pudo cargar el catálogo de productos.'), 'Error');
         this.loading = false;
       }
     });
@@ -195,8 +196,7 @@ export class Productos implements OnInit {
               this.cargarProductos();
             },
             error: (err) => {
-              const msg = err.error?.message || err.error || 'No se pudo actualizar el producto';
-              this.toast.error(msg, 'Error');
+              this.toast.error(mensajeErrorHttp(err, 'No se pudo actualizar el producto'), 'Error');
             }
           });
         } else {
@@ -206,8 +206,7 @@ export class Productos implements OnInit {
               this.cargarProductos();
             },
             error: (err) => {
-              const msg = err.error?.message || err.error || 'No se pudo crear el producto';
-              this.toast.error(msg, 'Error');
+              this.toast.error(mensajeErrorHttp(err, 'No se pudo crear el producto'), 'Error');
             }
           });
         }
@@ -237,8 +236,7 @@ export class Productos implements OnInit {
             this.cargarProductos();
           },
           error: (err) => {
-            const msg = err.error?.message || err.error || 'No se puede eliminar este producto';
-            this.toast.error(msg, 'Error');
+            this.toast.error(mensajeErrorHttp(err, 'No se puede eliminar este producto'), 'Error');
           }
         });
       }
