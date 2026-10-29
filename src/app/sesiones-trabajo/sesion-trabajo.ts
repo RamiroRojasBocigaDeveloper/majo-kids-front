@@ -19,6 +19,10 @@ export interface ResumenCierre {
   totalVentas: number;
   totalGastos: number;
   saldoNeto: number;
+  ventasPorMetodoPago: { [nombre: string]: number };
+  totalEfectivo: number;
+  totalNoEfectivo: number;
+  efectivoEsperado: number;
 }
 
 @Injectable({

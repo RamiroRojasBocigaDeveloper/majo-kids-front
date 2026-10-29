@@ -28,15 +28,34 @@ import { ToastService } from '../shared/toast.service';
           <span class="label">Total Ventas (Bruto)</span>
           <span class="value pos">{{ data.totalVentas | currency:'COP' }}</span>
         </div>
+
+        <div class="desglose" *ngIf="metodosPago().length > 0">
+          <span class="desglose-title">Desglose por método de pago</span>
+          <div class="metodo-row" *ngFor="let m of metodosPago()">
+            <span class="metodo-nombre">
+              <mat-icon class="metodo-icon">{{ m.esEfectivo ? 'payments' : 'swap_horiz' }}</mat-icon>
+              {{ m.nombre }}
+            </span>
+            <span class="metodo-valor" [class.efectivo]="m.esEfectivo">{{ m.monto | currency:'COP' }}</span>
+          </div>
+        </div>
+
+        <div class="resumen-item" *ngIf="data.totalNoEfectivo > 0">
+          <span class="label">Total No Efectivo (no se cuenta en caja)</span>
+          <span class="value info">{{ data.totalNoEfectivo | currency:'COP' }}</span>
+        </div>
         <div class="resumen-item">
           <span class="label">Total Gastos</span>
           <span class="value neg">{{ data.totalGastos | currency:'COP' }}</span>
         </div>
         <div class="divider"></div>
         <div class="resumen-item highlight" [ngClass]="getResultClass()">
-          <span class="label">Saldo Esperado (Caja)</span>
-          <span class="value">{{ data.saldoNeto | currency:'COP' }}</span>
+          <span class="label">Efectivo Esperado en Caja</span>
+          <span class="value">{{ data.efectivoEsperado | currency:'COP' }}</span>
         </div>
+        <p class="hint" *ngIf="data.totalNoEfectivo > 0">
+          Transferencias y consignaciones no se cuentan dentro del dinero físico de la caja.
+        </p>
       </div>
 
       <div class="dialog-actions">
@@ -61,6 +80,15 @@ import { ToastService } from '../shared/toast.service';
     .highlight { padding-top: 8px; }
     .highlight .label { font-size: 1.1rem; font-weight: 700; color: #333; }
     .highlight .value { font-size: 1.3rem; }
+    .desglose { background: #f0f4f8; border-radius: 8px; padding: 10px 12px; }
+    .desglose-title { display: block; font-size: 0.8rem; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .metodo-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
+    .metodo-nombre { display: flex; align-items: center; gap: 6px; font-size: 0.95rem; color: #444; }
+    .metodo-icon { font-size: 16px; width: 16px; height: 16px; color: #888; }
+    .metodo-valor { font-weight: 700; font-size: 0.95rem; }
+    .metodo-valor.efectivo { color: #2e7d32; }
+    .value.info { color: #1565c0; }
+    .hint { font-size: 0.8rem; color: #888; margin: 4px 0 0; text-align: center; }
     .dialog-actions { display: flex; justify-content: center; gap: 16px; }
     .btn-cancel { color: #666; }
     .btn-confirm { padding: 0 24px; border-radius: 8px; }
@@ -78,6 +106,15 @@ import { ToastService } from '../shared/toast.service';
 export class ResumenCierreDialog {
   dialogRef = inject(MatDialogRef<ResumenCierreDialog>);
   data: ResumenCierre = inject(MAT_DIALOG_DATA);
+
+  metodosPago(): { nombre: string; monto: number; esEfectivo: boolean }[] {
+    const mapa = this.data.ventasPorMetodoPago || {};
+    return Object.entries(mapa).map(([nombre, monto]) => ({
+      nombre,
+      monto,
+      esEfectivo: nombre.toLowerCase().includes('efectivo')
+    }));
+  }
 
   getResultClass(): string {
     if (this.data.totalVentas === 0 || this.data.totalVentas < this.data.totalGastos) {
