@@ -25,6 +25,21 @@ export interface ResumenCierre {
   efectivoEsperado: number;
 }
 
+export interface DetalleVentaEfectivo {
+  productoNombre: string;
+  cantidad: number;
+  precioUnitario: number;
+  subtotalItem: number;
+}
+
+export interface VentaEfectivo {
+  numeroFactura: string;
+  total: number;
+  createdAt: string;
+  fechaRegistroManual?: string;
+  detalles: DetalleVentaEfectivo[];
+}
+
 @Injectable({
   providedIn: 'root'
 })

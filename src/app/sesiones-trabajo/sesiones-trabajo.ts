@@ -4,12 +4,122 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { SesionTrabajoService, SesionTrabajo, ResumenCierre } from './sesion-trabajo';
+import { MatDialogModule, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { SesionTrabajoService, SesionTrabajo, ResumenCierre, VentaEfectivo } from './sesion-trabajo';
+import { VentaService } from '../ventas/venta';
 import { AuthService } from '../auth/auth';
 import { finalize } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToastService } from '../shared/toast.service';
+
+@Component({
+  selector: 'app-ventas-efectivo-dialog',
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatDialogModule],
+  template: `
+    <div class="dialog-wrapper">
+      <div class="header-icon efectivo">
+        <mat-icon>payments</mat-icon>
+      </div>
+      <h2 class="dialog-title">Ventas en Efectivo de Hoy</h2>
+      <p class="dialog-subtitle">Productos cobrados en efectivo en esta sesión de caja.</p>
+
+      <div *ngIf="loading()" class="loading-state">
+        <mat-icon class="spin">hourglass_top</mat-icon>
+        <span>Cargando detalle...</span>
+      </div>
+
+      <div *ngIf="!loading() && error()" class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+      </div>
+
+      <div *ngIf="!loading() && !error()" class="ventas-list">
+        <div *ngIf="ventas().length === 0" class="empty-state">
+          <mat-icon>info_outline</mat-icon>
+          <span>No hubo ventas en efectivo en esta sesión.</span>
+        </div>
+
+        <div *ngFor="let venta of ventas()" class="venta-card">
+          <div class="venta-header">
+            <span class="factura">{{ venta.numeroFactura }}</span>
+            <span class="hora">{{ (venta.fechaRegistroManual || venta.createdAt) | date:'shortTime' }}</span>
+            <span class="total-venta">{{ venta.total | currency:'COP' }}</span>
+          </div>
+          <div class="producto-row" *ngFor="let d of venta.detalles">
+            <span class="prod-nombre">{{ d.productoNombre }}</span>
+            <span class="prod-cant">{{ d.cantidad }} x {{ d.precioUnitario | currency:'COP' }}</span>
+            <span class="prod-subtotal">{{ (d.subtotalItem ?? d.cantidad * d.precioUnitario) | currency:'COP' }}</span>
+          </div>
+        </div>
+
+        <div class="total-general" *ngIf="ventas().length > 0">
+          <span>Total Efectivo</span>
+          <span class="total-valor">{{ totalEfectivo() | currency:'COP' }}</span>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button mat-flat-button color="primary" (click)="dialogRef.close()">Cerrar</button>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .dialog-wrapper { padding: 24px; text-align: center; }
+    .header-icon { display: flex; justify-content: center; align-items: center; width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 16px; font-size: 2rem; }
+    .header-icon.efectivo { color: #2e7d32; background-color: #e8f5e9; }
+    .header-icon mat-icon { font-size: 36px; width: 36px; height: 36px; }
+    .dialog-title { font-size: 1.4rem; font-weight: 800; color: #333; margin: 0 0 8px 0; }
+    .dialog-subtitle { color: #666; font-size: 0.9rem; margin-bottom: 16px; }
+    .ventas-list { max-height: 55vh; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 12px; padding-right: 4px; }
+    .venta-card { background: #fafafa; border: 1px solid #eee; border-radius: 10px; padding: 12px; }
+    .venta-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #e0e0e0; }
+    .factura { font-weight: 700; font-size: 0.8rem; color: #555; }
+    .hora { font-size: 0.8rem; color: #888; }
+    .total-venta { font-weight: 800; color: #2e7d32; }
+    .producto-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 3px 0; font-size: 0.9rem; }
+    .prod-nombre { color: #444; flex: 1; }
+    .prod-cant { color: #777; font-size: 0.85rem; white-space: nowrap; }
+    .prod-subtotal { font-weight: 700; color: #333; white-space: nowrap; }
+    .total-general { display: flex; justify-content: space-between; align-items: center; background: #e8f5e9; border-radius: 10px; padding: 12px; font-weight: 700; position: sticky; bottom: 0; }
+    .total-valor { color: #2e7d32; font-size: 1.15rem; font-weight: 800; }
+    .loading-state, .error-state, .empty-state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px 16px; color: #777; }
+    .error-state { color: #c62828; }
+    .error-state mat-icon, .empty-state mat-icon, .loading-state mat-icon { font-size: 36px; width: 36px; height: 36px; }
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .dialog-actions { display: flex; justify-content: center; margin-top: 16px; }
+  `]
+})
+export class VentasEfectivoDialog {
+  dialogRef = inject(MatDialogRef<VentasEfectivoDialog>);
+  private ventaService = inject(VentaService);
+  private toast = inject(ToastService);
+
+  sesionId: number = inject(MAT_DIALOG_DATA);
+
+  loading = signal(true);
+  error = signal<string | null>(null);
+  ventas = signal<VentaEfectivo[]>([]);
+  totalEfectivo = signal(0);
+
+  constructor() {
+    this.ventaService.obtenerEfectivoPorSesion(this.sesionId).pipe(
+      finalize(() => this.loading.set(false))
+    ).subscribe({
+      next: (ventas) => {
+        this.ventas.set(ventas);
+        this.totalEfectivo.set(ventas.reduce((acc, v) => acc + (v.total || 0), 0));
+      },
+      error: (err) => {
+        console.error('Error ventas efectivo:', err);
+        const msg = err.error?.message || 'No se pudo cargar el detalle de ventas en efectivo.';
+        this.error.set(msg);
+        this.toast.error(msg, 'Error');
+      }
+    });
+  }
+}
 
 @Component({
   selector: 'app-resumen-cierre-dialog',
@@ -58,6 +168,11 @@ import { ToastService } from '../shared/toast.service';
         </p>
       </div>
 
+      <button mat-stroked-button class="btn-detalle" *ngIf="data.totalEfectivo > 0" (click)="verVentasEnEfectivo()">
+        <mat-icon>receipt_long</mat-icon>
+        Ver productos vendidos en efectivo
+      </button>
+
       <div class="dialog-actions">
         <button mat-button class="btn-cancel" (click)="dialogRef.close(false)">Cancelar</button>
         <button mat-flat-button class="btn-confirm" color="warn" (click)="dialogRef.close(true)">Cerrar Caja</button>
@@ -89,6 +204,8 @@ import { ToastService } from '../shared/toast.service';
     .metodo-valor.efectivo { color: #2e7d32; }
     .value.info { color: #1565c0; }
     .hint { font-size: 0.8rem; color: #888; margin: 4px 0 0; text-align: center; }
+    .btn-detalle { width: 100%; margin-bottom: 16px; color: #2e7d32; border-color: #a5d6a7; font-size: 0.85rem; }
+    .btn-detalle mat-icon { font-size: 18px; width: 18px; height: 18px; margin-right: 4px; vertical-align: middle; }
     .dialog-actions { display: flex; justify-content: center; gap: 16px; }
     .btn-cancel { color: #666; }
     .btn-confirm { padding: 0 24px; border-radius: 8px; }
@@ -106,6 +223,15 @@ import { ToastService } from '../shared/toast.service';
 export class ResumenCierreDialog {
   dialogRef = inject(MatDialogRef<ResumenCierreDialog>);
   data: ResumenCierre = inject(MAT_DIALOG_DATA);
+  private dialog = inject(MatDialog);
+
+  verVentasEnEfectivo() {
+    this.dialog.open(VentasEfectivoDialog, {
+      width: '480px',
+      disableClose: true,
+      data: this.data.sesionId
+    });
+  }
 
   metodosPago(): { nombre: string; monto: number; esEfectivo: boolean }[] {
     const mapa = this.data.ventasPorMetodoPago || {};

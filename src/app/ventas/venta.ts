@@ -37,6 +37,10 @@ export class VentaService {
     return this.http.get<any[]>(`${this.apiUrl}/sesion/${sesionId}`);
   }
 
+  obtenerEfectivoPorSesion(sesionId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/sesion/${sesionId}/efectivo`);
+  }
+
   obtenerPorRango(inicio: string, fin: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/rango?inicio=${inicio}&fin=${fin}`);
   }
