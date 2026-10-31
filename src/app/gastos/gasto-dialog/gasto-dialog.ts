@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { CategoriaGastoService, CategoriaGasto } from '../categoria-gasto';
 import { SubcategoriaGastoService, SubcategoriaGasto } from '../subcategoria-gasto';
 import { UsuarioService, Usuario } from '../../usuarios/usuario';
@@ -31,6 +32,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatSlideToggleModule,
     MatIconModule
   ],
   template: `
@@ -83,6 +85,19 @@ import { provideNativeDateAdapter } from '@angular/material/core';
             </mat-select>
             <mat-hint>Si se deja vacío, se asignará a tu sesión actual</mat-hint>
           </mat-form-field>
+
+          <!-- Toggle solo para administradores -->
+          <div *ngIf="isAdmin()" class="tipo-gasto-toggle">
+            <div class="toggle-label">
+              <mat-icon>{{ form.get('esDeCaja')?.value ? 'point_of_sale' : 'account_balance' }}</mat-icon>
+              <span>Tipo de gasto:</span>
+              <strong [class.de-caja]="form.get('esDeCaja')?.value" [class.general]="!form.get('esDeCaja')?.value">
+                {{ form.get('esDeCaja')?.value ? 'Sale de la caja' : 'Gasto general (no afecta caja)' }}
+              </strong>
+            </div>
+            <mat-slide-toggle formControlName="esDeCaja" color="accent">
+            </mat-slide-toggle>
+          </div>
         </div>
       </form>
     </mat-dialog-content>
@@ -145,6 +160,27 @@ import { provideNativeDateAdapter } from '@angular/material/core';
       width: 100% !important;
       color: #888 !important;
     }
+
+    .tipo-gasto-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      margin-top: 4px;
+    }
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #555;
+    }
+    .toggle-label mat-icon { font-size: 20px; width: 20px; height: 20px; color: #888; }
+    .de-caja { color: #2e7d32; font-weight: 700; }
+    .general { color: #1565c0; font-weight: 700; }
   `]
 })
 export class GastoDialog implements OnInit {
@@ -168,7 +204,8 @@ export class GastoDialog implements OnInit {
     monto: ['', [Validators.required, Validators.min(1)]],
     descripcion: ['', [Validators.required, Validators.maxLength(200)]],
     fechaHistorica: [null],
-    usuarioId: [null]
+    usuarioId: [null],
+    esDeCaja: [true]  // Default: siempre sale de caja. Solo el admin puede cambiarlo.
   });
 
   isAdmin(): boolean {

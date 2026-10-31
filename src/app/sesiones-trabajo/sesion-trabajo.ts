@@ -18,6 +18,8 @@ export interface ResumenCierre {
   sesionId: number;
   totalVentas: number;
   totalGastos: number;
+  totalGastosDeCaja: number;
+  totalGastosGenerales: number;
   saldoNeto: number;
   ventasPorMetodoPago: { [nombre: string]: number };
   totalEfectivo: number;

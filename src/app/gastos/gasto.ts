@@ -7,6 +7,7 @@ export interface Gasto {
   id?: number;
   descripcion: string;
   monto: number;
+  esDeCaja: boolean;
   createdAt: string; 
   fechaRegistroManual?: string;
   categoriaGastoNombre?: string;
@@ -21,6 +22,7 @@ export interface GastoRequest {
   descripcion: string;
   monto: number;
   sesionId: number;
+  esDeCaja: boolean;
   fechaHistorica?: string;
   usuarioId?: number;
 }
