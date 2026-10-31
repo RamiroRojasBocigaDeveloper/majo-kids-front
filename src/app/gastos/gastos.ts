@@ -85,6 +85,16 @@ import { ToastService } from '../shared/toast.service';
             </td>
           </ng-container>
 
+          <ng-container matColumnDef="tipo">
+            <th mat-header-cell *matHeaderCellDef> Tipo </th>
+            <td mat-cell *matCellDef="let g">
+              <span class="tipo-badge" [class.badge-caja]="g.esDeCaja" [class.badge-general]="!g.esDeCaja">
+                <mat-icon style="font-size:14px;width:14px;height:14px;vertical-align:middle;margin-right:3px;">{{g.esDeCaja ? 'point_of_sale' : 'account_balance'}}</mat-icon>
+                {{g.esDeCaja ? 'Caja' : 'General'}}
+              </span>
+            </td>
+          </ng-container>
+
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
@@ -142,6 +152,24 @@ import { ToastService } from '../shared/toast.service';
       margin-left: 4px;
       font-weight: 500;
     }
+    .tipo-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .badge-caja {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+    .badge-general {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #90caf9;
+    }
     .add-gasto-btn {
       padding: 25px 30px !important;
       font-weight: 800;
@@ -176,7 +204,7 @@ export class Gastos implements OnInit {
 
   gastos = signal<Gasto[]>([]);
   loading = false;
-  displayedColumns = ['fecha', 'descripcion', 'categoria', 'monto', 'usuario'];
+  displayedColumns = ['fecha', 'descripcion', 'categoria', 'tipo', 'monto', 'usuario'];
 
   ngOnInit() {
     if (this.isAdmin()) {
