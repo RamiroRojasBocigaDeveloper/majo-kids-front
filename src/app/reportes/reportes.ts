@@ -7,7 +7,6 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -43,6 +42,15 @@ export const MY_FORMATS = {
   },
 };
 
+interface MetodoPagoCard {
+  nombre: string;
+  monto: number;
+  pct: number;
+  icon: string;
+  color: string;
+  bg: string;
+}
+
 @Component({
   selector: 'app-reportes',
   standalone: true,
@@ -56,7 +64,6 @@ export const MY_FORMATS = {
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatDividerModule,
     MatProgressBarModule,
     MatDatepickerModule,
     MatNativeDateModule,
@@ -65,614 +72,371 @@ export const MY_FORMATS = {
     ReactiveFormsModule
   ],
   template: `
-    <mat-card class="header-card">
-      <div class="header-content">
-        <div class="title-group">
-          <h1>Análisis Financiero Premium</h1>
-          <p>Visualización avanzada de rentabilidad y rendimiento</p>
-        </div>
-        <div class="date-filter-group">
-          <mat-form-field appearance="outline" class="date-picker-single">
-            <mat-label>Fecha Inicio</mat-label>
-            <input matInput [matDatepicker]="startPicker" [formControl]="range.controls.start" [max]="range.controls.end.value || today" (dateChange)="cargarReporte()">
-            <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
-            <mat-datepicker #startPicker panelClass="white-datepicker"></mat-datepicker>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="date-picker-single">
-            <mat-label>Fecha Fin</mat-label>
-            <input matInput [matDatepicker]="endPicker" [formControl]="range.controls.end" [min]="range.controls.start.value!" [max]="today" (dateChange)="cargarReporte()">
-            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
-            <mat-datepicker #endPicker panelClass="white-datepicker"></mat-datepicker>
-          </mat-form-field>
-          
-          <div class="quick-filters">
-            <button mat-stroked-button (click)="setRange('week')">Semana</button>
-            <button mat-stroked-button (click)="setRange('month')">Mes</button>
-            <button mat-flat-button class="btn-filter" (click)="cargarReporte()">
-              <mat-icon>analytics</mat-icon> Actualizar
-            </button>
+    <div class="reportes-page">
+      <mat-card class="header-card">
+        <div class="header-content">
+          <div class="title-group">
+            <h1>Reportes</h1>
+            <p>Análisis financiero de ventas, ganancias y egresos</p>
           </div>
-        </div>
-      </div>
-    </mat-card>
+          <div class="date-filter-group">
+            <mat-form-field appearance="outline" class="date-picker-single">
+              <mat-label>Fecha Inicio</mat-label>
+              <input matInput [matDatepicker]="startPicker" [formControl]="range.controls.start" [max]="range.controls.end.value || today" (dateChange)="cargarReporte()">
+              <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker panelClass="white-datepicker"></mat-datepicker>
+            </mat-form-field>
 
-    <div *ngIf="loading" class="progress-container">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </div>
+            <mat-form-field appearance="outline" class="date-picker-single">
+              <mat-label>Fecha Fin</mat-label>
+              <input matInput [matDatepicker]="endPicker" [formControl]="range.controls.end" [min]="range.controls.start.value!" [max]="today" (dateChange)="cargarReporte()">
+              <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker panelClass="white-datepicker"></mat-datepicker>
+            </mat-form-field>
 
-    <div class="kpi-container" *ngIf="data()">
-      <div class="kpi-card-luxury sales-card">
-        <div class="kpi-icon">📈</div>
-        <div class="kpi-info">
-          <span class="kpi-label">VENTAS TOTALES</span>
-          <h2 class="kpi-value">{{data()?.totalVentas | currency:'COP':'symbol':'1.0-0'}}</h2>
-        </div>
-      </div>
-
-      <div class="kpi-card-luxury expenses-card">
-        <div class="kpi-icon">💸</div>
-        <div class="kpi-info">
-          <span class="kpi-label">TOTAL GASTOS</span>
-          <h2 class="kpi-value">{{(data()?.totalGastos || 0) + (data()?.totalSueldos || 0) | currency:'COP':'symbol':'1.0-0'}}</h2>
-        </div>
-      </div>
-
-      <div class="kpi-card-luxury profit-card">
-        <div class="kpi-icon">💰</div>
-        <div class="kpi-info">
-          <span class="kpi-label">GANANCIA TOTAL</span>
-          <h2 class="kpi-value">{{data()?.gananciaProductos | currency:'COP':'symbol':'1.0-0'}}</h2>
-        </div>
-      </div>
-
-      <div class="kpi-card-luxury cashflow-card">
-        <div class="kpi-icon">📊</div>
-        <div class="kpi-info">
-          <span class="kpi-label">FLUJO DE CAJA (NETO)</span>
-          <h2 class="kpi-value" [class.negative]="(data()?.gananciaNeta || 0) < 0">
-            {{data()?.gananciaNeta | currency:'COP':'symbol':'1.0-0'}}
-          </h2>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECCIÓN DE GRÁFICAS DE DISTRIBUCIÓN -->
-    <div class="charts-grid-triple" *ngIf="data()">
-       <mat-card class="luxury-table-card chart-card">
-          <mat-card-header>
-            <mat-card-title>Distribución de Ventas</mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="chart-content">
-            <canvas #catChart></canvas>
-          </mat-card-content>
-       </mat-card>
-
-       <mat-card class="luxury-table-card chart-card">
-          <mat-card-header>
-            <mat-card-title>Distribución de Ganancias</mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="chart-content">
-            <canvas #profitChart></canvas>
-          </mat-card-content>
-       </mat-card>
-
-       <mat-card class="luxury-table-card chart-card">
-          <mat-card-header>
-            <mat-card-title>Distribución de Gastos</mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="chart-content">
-            <canvas #expChart></canvas>
-          </mat-card-content>
-       </mat-card>
-    </div>
-
-    <!-- BALANCE Y TOP PRODUCTOS -->
-    <div class="charts-grid" *ngIf="data()">
-       <mat-card class="luxury-table-card chart-card">
-          <mat-card-header>
-            <mat-card-title>Balance Ingresos vs Egresos</mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="chart-content">
-            <canvas #compChart></canvas>
-          </mat-card-content>
-       </mat-card>
-
-       <mat-card class="luxury-table-card top-products">
-          <mat-card-header>
-            <mat-card-title>Top Productos Vendidos</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="table-container">
-              <table class="premium-table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Producto</th>
-                    <th class="text-right">Unidades</th>
-                    <th>Popularidad</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let item of productosMasVendidos(); let i = index">
-                    <td><span class="rank-badge">{{i + 1}}</span></td>
-                    <td>{{item.nombre}}</td>
-                    <td class="text-right">{{item.cantidad}}</td>
-                    <td class="progress-col">
-                       <div class="progress-bar-small">
-                          <div class="progress-fill" [style.width.%]="(item.cantidad / (productosMasVendidos()[0].cantidad || 1)) * 100"></div>
-                       </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="quick-filters">
+              <button mat-stroked-button (click)="setRange('week')">Semana</button>
+              <button mat-stroked-button (click)="setRange('month')">Mes</button>
+              <button mat-flat-button class="btn-filter" (click)="cargarReporte()">
+                <mat-icon>refresh</mat-icon> Actualizar
+              </button>
             </div>
-            <div *ngIf="productosMasVendidos().length === 0" class="empty-state">
-               No hay ventas registradas en este período.
+          </div>
+        </div>
+      </mat-card>
+
+      <div *ngIf="loading" class="progress-container">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+
+      <ng-container *ngIf="data() as d">
+
+        <!-- ==================== KPIs PRINCIPALES ==================== -->
+        <div class="kpi-row">
+          <div class="kpi-card accent-pink">
+            <div class="kpi-icon"><mat-icon>trending_up</mat-icon></div>
+            <div class="kpi-info">
+              <span class="kpi-label">Ventas totales</span>
+              <span class="kpi-value">{{ d.totalVentas | currency:'COP':'symbol':'1.0-0' }}</span>
             </div>
-          </mat-card-content>
-       </mat-card>
-    </div>
+          </div>
+          <div class="kpi-card accent-red">
+            <div class="kpi-icon"><mat-icon>receipt_long</mat-icon></div>
+            <div class="kpi-info">
+              <span class="kpi-label">Total egresos</span>
+              <span class="kpi-value">{{ (d.totalGastos || 0) + (d.totalSueldos || 0) | currency:'COP':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+          <div class="kpi-card accent-green">
+            <div class="kpi-icon"><mat-icon>savings</mat-icon></div>
+            <div class="kpi-info">
+              <span class="kpi-label">Ganancia total</span>
+              <span class="kpi-value">{{ d.gananciaProductos | currency:'COP':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+          <div class="kpi-card accent-violet" [class.is-negative]="d.gananciaNeta < 0">
+            <div class="kpi-icon"><mat-icon>account_balance_wallet</mat-icon></div>
+            <div class="kpi-info">
+              <span class="kpi-label">Flujo de caja neto</span>
+              <span class="kpi-value">{{ d.gananciaNeta | currency:'COP':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+        </div>
 
-    <!-- TABLES SECTION (REPLACING CHARTS) -->
-    <div class="charts-grid" *ngIf="data()">
-      <mat-card class="chart-card table-summary-card">
-        <mat-card-header>
-          <div class="chart-title-group">
-            <span class="chart-emoji">📊</span>
-            <mat-card-title>Ventas por Categoría</mat-card-title>
+        <!-- ============ INGRESOS POR MEDIO DE PAGO ============ -->
+        <section class="panel">
+          <div class="section-head">
+            <div class="section-icon"><mat-icon>account_balance_wallet</mat-icon></div>
+            <div class="section-titles">
+              <span class="eyebrow">Distribución de ingresos</span>
+              <h2>Dinero recibido por medio de pago</h2>
+            </div>
           </div>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="mini-table-container">
-            <table class="premium-table mini">
-              <thead>
-                <tr>
-                  <th>Categoría</th>
-                  <th class="text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of ventasPorCategoria()">
-                  <td class="category-name">{{item.nombre}}</td>
-                  <td class="text-right">{{item.monto | currency:'COP':'symbol':'1.0-0'}}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div *ngIf="ventasPorCategoria().length === 0" class="empty-state-mini">Sin datos</div>
-          </div>
-        </mat-card-content>
-      </mat-card>
 
-      <mat-card class="chart-card table-summary-card">
-        <mat-card-header>
-          <div class="chart-title-group">
-            <span class="chart-emoji">💰</span>
-            <mat-card-title>Ganancias por Categoría</mat-card-title>
+          <div class="pay-grid" *ngIf="metodosPago().length > 0; else sinMetodos">
+            <div class="pay-card" *ngFor="let m of metodosPago()">
+              <div class="pay-icon" [style.color]="m.color" [style.background]="m.bg">
+                <mat-icon>{{ m.icon }}</mat-icon>
+              </div>
+              <span class="pay-label">{{ m.nombre }}</span>
+              <span class="pay-value">{{ m.monto | currency:'COP':'symbol':'1.0-0' }}</span>
+              <div class="pay-bar">
+                <div class="pay-bar-fill" [style.width.%]="m.pct" [style.background]="m.color"></div>
+              </div>
+              <span class="pay-sub">{{ m.pct }}% del total</span>
+            </div>
           </div>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="mini-table-container">
-            <table class="premium-table mini">
-              <thead>
-                <tr>
-                  <th>Categoría</th>
-                  <th class="text-right">Ganancia</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of gananciasPorCategoria()">
-                  <td class="category-name green">{{item.nombre}}</td>
-                  <td class="text-right green">{{item.monto | currency:'COP':'symbol':'1.0-0'}}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div *ngIf="gananciasPorCategoria().length === 0" class="empty-state-mini">Sin datos</div>
-          </div>
-        </mat-card-content>
-      </mat-card>
+          <ng-template #sinMetodos>
+            <p class="empty-inline">No hay ventas registradas en este período.</p>
+          </ng-template>
+        </section>
 
-      <mat-card class="chart-card table-summary-card">
-        <mat-card-header>
-          <div class="chart-title-group">
-            <span class="chart-emoji">💸</span>
-            <mat-card-title>Gastos por Categoría</mat-card-title>
-          </div>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="mini-table-container">
-            <table class="premium-table mini">
-              <thead>
-                <tr>
-                  <th>Categoría</th>
-                  <th class="text-right">Gasto</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of gastosPorCategoria()">
-                  <td class="category-name red">{{item.nombre}}</td>
-                  <td class="text-right red">{{item.monto | currency:'COP':'symbol':'1.0-0'}}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div *ngIf="gastosPorCategoria().length === 0" class="empty-state-mini">Sin datos</div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
+        <!-- ==================== DISTRIBUCIÓN (GRÁFICAS) ==================== -->
+        <div class="charts-row">
+          <section class="panel chart-panel">
+            <div class="section-head compact">
+              <div class="section-icon small pink"><mat-icon>pie_chart</mat-icon></div>
+              <div class="section-titles">
+                <span class="eyebrow">Categorías</span>
+                <h3>Ventas</h3>
+              </div>
+            </div>
+            <div class="chart-body"><canvas #catChart></canvas></div>
+          </section>
+          <section class="panel chart-panel">
+            <div class="section-head compact">
+              <div class="section-icon small green"><mat-icon>donut_small</mat-icon></div>
+              <div class="section-titles">
+                <span class="eyebrow">Categorías</span>
+                <h3>Ganancias</h3>
+              </div>
+            </div>
+            <div class="chart-body"><canvas #profitChart></canvas></div>
+          </section>
+          <section class="panel chart-panel">
+            <div class="section-head compact">
+              <div class="section-icon small red"><mat-icon>pie_chart_outline</mat-icon></div>
+              <div class="section-titles">
+                <span class="eyebrow">Categorías</span>
+                <h3>Gastos</h3>
+              </div>
+            </div>
+            <div class="chart-body"><canvas #expChart></canvas></div>
+          </section>
+        </div>
 
-    <!-- EXPENSE DETAILS -->
-    <div class="bottom-grid" *ngIf="data()">
-        <mat-card class="luxury-table-card expense-details">
-          <mat-card-header>
-            <mat-card-title>Desglose Jerárquico de Gastos</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="table-container">
-              <div *ngFor="let group of gastosJerarquicos()" class="expense-group">
-                <div class="expense-group-header">
-                  <span class="expense-cat-name">{{group.categoria}}</span>
-                  <span class="expense-cat-total">{{group.total | currency:'COP':'symbol':'1.0-0'}}</span>
-                </div>
-                <div *ngFor="let sub of group.subItems" class="expense-sub-row">
-                  <span class="expense-sub-name">{{sub.nombre}}</span>
-                  <span class="expense-sub-monto">{{sub.monto | currency:'COP':'symbol':'1.0-0'}}</span>
+        <!-- ==================== BALANCE + TOP 10 ==================== -->
+        <div class="duo-row">
+          <section class="panel chart-panel">
+            <div class="section-head compact">
+              <div class="section-icon small violet"><mat-icon>bar_chart</mat-icon></div>
+              <div class="section-titles">
+                <span class="eyebrow">Resumen</span>
+                <h3>Ingresos vs Egresos</h3>
+              </div>
+            </div>
+            <div class="chart-body tall"><canvas #compChart></canvas></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head compact">
+              <div class="section-icon small amber"><mat-icon>emoji_events</mat-icon></div>
+              <div class="section-titles">
+                <span class="eyebrow">Unidades vendidas</span>
+                <h3>Top 10 productos</h3>
+              </div>
+            </div>
+            <div class="top-list" *ngIf="productosTop10().length > 0; else sinProductos">
+              <div class="top-row" *ngFor="let item of productosTop10(); let i = index">
+                <span class="rank" [class]="'rank-' + (i + 1)">{{ i + 1 }}</span>
+                <div class="top-info">
+                  <div class="top-name-line">
+                    <span class="top-name">{{ item.nombre }}</span>
+                    <span class="top-cant">{{ item.cantidad }} u.</span>
+                  </div>
+                  <div class="top-bar">
+                    <div class="top-bar-fill" [style.width.%]="(item.cantidad / (productosTop10()[0].cantidad || 1)) * 100"></div>
+                  </div>
                 </div>
               </div>
-              
-              <table class="premium-table">
-                <tfoot>
-                  <tr class="total-row-final">
-                    <td style="padding: 15px; font-weight: 800;">TOTAL GENERAL EGRESOS</td>
-                    <td class="text-right" style="padding: 15px; font-weight: 800;">
-                      {{(data()?.totalGastos || 0) + (data()?.totalSueldos || 0) | currency:'COP':'symbol':'1.0-0'}}
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
             </div>
-          </mat-card-content>
-        </mat-card>
-    </div>
+            <ng-template #sinProductos>
+              <p class="empty-inline">No hay ventas registradas en este período.</p>
+            </ng-template>
+          </section>
+        </div>
 
-    <!-- VENTAS DETALLADAS -->
-    <mat-card class="luxury-table-card full-width-card" *ngIf="data()">
-       <mat-card-header>
-         <div class="chart-title-group">
-            <span class="chart-emoji">🧾</span>
-            <mat-card-title>Historial Detallado de Ventas ({{data()?.detalleVentas?.length || 0}})</mat-card-title>
-         </div>
-       </mat-card-header>
-       <mat-card-content>
-          <div class="table-container">
-             <table class="premium-table">
-                <thead>
-                   <tr>
-                      <th style="color: var(--primary-pink)">Ref.</th>
-                      <th style="color: var(--primary-pink)">Producto / Categoría</th>
-                      <th>Fecha (Negocio/Reg)</th>
-                      <th>Vendedor</th>
-                      <th class="text-right">Total</th>
-                   </tr>
-                </thead>
-                <tbody>
-                   <tr *ngFor="let v of data()?.detalleVentas">
-                      <td>
-                         <div *ngFor="let d of v.detalles">
-                            <span class="ref-text">{{d.productoReferencia}}</span>
-                         </div>
-                      </td>
-                      <td>
-                         <div *ngFor="let d of v.detalles" class="prod-info-mini">
-                            <strong>{{d.productoNombre}}</strong>
-                            <span class="cat-badge-mini" [style.background-color]="getCategoryColor(d.categoriaNombre)">
-                               {{d.categoriaNombre}}
-                            </span>
-                         </div>
-                      </td>
-                      <td>
-                         <div class="date-col">
-                            <strong>{{(v.fechaRegistroManual || v.createdAt) | date:'dd/MM/yyyy'}}</strong><br>
-                            <small>{{v.createdAt | date:'shortTime'}}</small>
-                         </div>
-                      </td>
-                      <td><span class="user-pill">{{v.nombreVendedor || 'Vendedor'}}</span></td>
-                      <td class="text-right">
-                         <strong>{{v.total | currency:'COP':'symbol':'1.0-0'}}</strong>
-                      </td>
-                   </tr>
-                </tbody>
-             </table>
-             <div *ngIf="data()?.detalleVentas?.length === 0" class="empty-state">No se encontraron ventas registradas en este periodo.</div>
+        <!-- ==================== RESUMEN POR CATEGORÍA (UNIFICADO) ==================== -->
+        <section class="panel" *ngIf="resumenCategorias().length > 0">
+          <div class="section-head">
+            <div class="section-icon"><mat-icon>category</mat-icon></div>
+            <div class="section-titles">
+              <span class="eyebrow">Ventas · Ganancia · Margen</span>
+              <h2>Resumen por categoría</h2>
+            </div>
           </div>
-       </mat-card-content>
-    </mat-card>
-
-    <!-- FULL DETAILED EXPENSES TABLE -->
-    <div class="bottom-grid" *ngIf="data() && data()?.detalleGastos">
-      <mat-card class="luxury-table-card full-width-card">
-        <mat-card-header>
-          <mat-card-title>Historial Detallado de Egresos</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="table-container">
-            <table class="premium-table">
+          <div class="table-wrap summary-wrap">
+            <table class="data-table summary-table">
               <thead>
                 <tr>
-                  <th>Fecha</th>
                   <th>Categoría</th>
-                  <th>Descripción</th>
-                  <th>Responsable/Origen</th>
-                  <th class="text-right">Monto</th>
+                  <th class="text-right">Ventas</th>
+                  <th class="text-right">Ganancia</th>
+                  <th class="text-center">Margen</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let g of data()?.detalleGastos">
-                  <td class="date-col">{{(g.fechaRegistroManual || g.createdAt) | date:'dd/MM/yyyy HH:mm'}}</td>
-                  <td><span class="category-name">{{g.categoriaGastoNombre}}</span></td>
-                  <td class="desc-col">{{g.descripcion}}</td>
-                  <td><span class="user-pill">{{g.nombreUsuario || 'Admin'}}</span></td>
-                  <td class="text-right monto-negativo">{{g.monto | currency:'COP':'symbol':'1.0-0'}}</td>
+                <tr *ngFor="let r of resumenCategorias()">
+                  <td class="cell-cat">
+                    <span class="cat-dot" [style.background]="getCatColor(r.categoria)"></span>
+                    <span class="cat-nombre">{{ r.categoria }}</span>
+                  </td>
+                  <td class="text-right cell-num">
+                    <span class="num-strong">{{ r.ventas | currency:'COP':'symbol':'1.0-0' }}</span>
+                    <div class="micro-bar"><div class="micro-fill pink" [style.width.%]="r.ventasPct"></div></div>
+                  </td>
+                  <td class="text-right cell-num">
+                    <span class="num-strong green" [class.negative]="r.ganancia < 0">{{ r.ganancia | currency:'COP':'symbol':'1.0-0' }}</span>
+                    <div class="micro-bar"><div class="micro-fill green-fill" [style.width.%]="r.gananciaPct"></div></div>
+                  </td>
+                  <td class="text-center">
+                    <span class="margin-chip" [class.margin-pos]="r.margen >= 20" [class.margin-neg]="r.margen < 0" [class.margin-mid]="r.margen >= 0 && r.margen < 20">
+                      {{ r.margen >= 0 ? '+' : '' }}{{ r.margen | number:'1.0-1' }}%
+                    </span>
+                  </td>
                 </tr>
               </tbody>
+              <tfoot>
+                <tr class="total-row">
+                  <td class="cell-cat">Total</td>
+                  <td class="text-right"><span class="num-strong">{{ totalesResumen().ventas | currency:'COP':'symbol':'1.0-0' }}</span></td>
+                  <td class="text-right"><span class="num-strong green">{{ totalesResumen().ganancia | currency:'COP':'symbol':'1.0-0' }}</span></td>
+                  <td class="text-center">
+                    <span class="margin-chip" [class.margin-pos]="totalesResumen().margen >= 20" [class.margin-neg]="totalesResumen().margen < 0" [class.margin-mid]="totalesResumen().margen >= 0 && totalesResumen().margen < 20">
+                      {{ totalesResumen().margen >= 0 ? '+' : '' }}{{ totalesResumen().margen | number:'1.0-1' }}%
+                    </span>
+                  </td>
+                </tr>
+              </tfoot>
             </table>
           </div>
-        </mat-card-content>
-      </mat-card>
+        </section>
+
+        <!-- ==================== DESGLOSE DE EGRESOS ==================== -->
+        <section class="panel" *ngIf="gastosJerarquicos().length > 0">
+          <div class="section-head">
+            <div class="section-icon red"><mat-icon>rule</mat-icon></div>
+            <div class="section-titles">
+              <span class="eyebrow">Categoría → detalle</span>
+              <h2>Desglose de egresos</h2>
+            </div>
+          </div>
+          <div class="expense-list">
+            <div class="expense-group" *ngFor="let group of gastosJerarquicos()">
+              <div class="expense-group-header">
+                <span class="expense-cat-name">{{ group.categoria }}</span>
+                <span class="expense-cat-total">{{ group.total | currency:'COP':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="expense-sub-row" *ngFor="let sub of group.subItems">
+                <span class="expense-sub-name">{{ sub.nombre }}</span>
+                <span class="expense-sub-monto">{{ sub.monto | currency:'COP':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+            <div class="expense-total-row">
+              <span>Total general de egresos</span>
+              <strong>{{ (d.totalGastos || 0) + (d.totalSueldos || 0) | currency:'COP':'symbol':'1.0-0' }}</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== HISTORIAL DE VENTAS ==================== -->
+        <section class="panel">
+          <button class="toggle-head" (click)="showVentas.set(!showVentas())"
+                  [attr.aria-expanded]="showVentas()" aria-label="Mostrar u ocultar historial de ventas">
+            <div class="section-head compact no-pointer">
+              <div class="section-icon small pink"><mat-icon>receipt_long</mat-icon></div>
+              <div class="section-titles">
+                <span class="eyebrow">{{ d.detalleVentas.length }} registros</span>
+                <h3>Historial detallado de ventas</h3>
+              </div>
+            </div>
+            <span class="action-chip" [class.open]="showVentas()">
+              <span class="chip-text">{{ showVentas() ? 'Ocultar historial' : 'Ver historial' }}</span>
+              <mat-icon class="chevron">{{ showVentas() ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </span>
+          </button>
+
+          <div class="collapse-body" *ngIf="showVentas()">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Ref.</th>
+                    <th>Producto / Categoría</th>
+                    <th>Método</th>
+                    <th>Fecha</th>
+                    <th>Vendedor</th>
+                    <th class="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let v of d.detalleVentas">
+                    <td>
+                      <div *ngFor="let det of v.detalles" class="ref-line">{{ det.productoReferencia }}</div>
+                    </td>
+                    <td>
+                      <div *ngFor="let det of v.detalles" class="prod-line">
+                        <strong>{{ det.productoNombre }}</strong>
+                        <span class="cat-chip">{{ det.categoriaNombre }}</span>
+                      </div>
+                    </td>
+                    <td><span class="method-chip">{{ v.metodoPagoNombre || '-' }}</span></td>
+                    <td class="cell-sub">
+                      <strong>{{ (v.fechaRegistroManual || v.createdAt) | date:'dd/MM/yyyy' }}</strong>
+                      <small>{{ v.createdAt | date:'shortTime' }}</small>
+                    </td>
+                    <td><span class="user-chip">{{ v.nombreVendedor || 'Vendedor' }}</span></td>
+                    <td class="text-right cell-strong">{{ v.total | currency:'COP':'symbol':'1.0-0' }}</td>
+                  </tr>
+                  <tr *ngIf="!d.detalleVentas.length">
+                    <td colspan="6" class="empty-cell">No se encontraron ventas en este periodo.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== HISTORIAL DE EGRESOS ==================== -->
+        <section class="panel" *ngIf="d.detalleGastos">
+          <button class="toggle-head" (click)="showGastos.set(!showGastos())"
+                  [attr.aria-expanded]="showGastos()" aria-label="Mostrar u ocultar historial de egresos">
+            <div class="section-head compact no-pointer">
+              <div class="section-icon small red"><mat-icon>remove_shopping_cart</mat-icon></div>
+              <div class="section-titles">
+                <span class="eyebrow">{{ d.detalleGastos.length }} registros</span>
+                <h3>Historial detallado de egresos</h3>
+              </div>
+            </div>
+            <span class="action-chip" [class.open]="showGastos()">
+              <span class="chip-text">{{ showGastos() ? 'Ocultar historial' : 'Ver historial' }}</span>
+              <mat-icon class="chevron">{{ showGastos() ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </span>
+          </button>
+
+          <div class="collapse-body" *ngIf="showGastos()">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Categoría</th>
+                    <th>Descripción</th>
+                    <th>Responsable</th>
+                    <th class="text-right">Monto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let g of d.detalleGastos">
+                    <td class="cell-sub">
+                      <strong>{{ (g.fechaRegistroManual || g.createdAt) | date:'dd/MM/yyyy' }}</strong>
+                      <small>{{ g.createdAt | date:'shortTime' }}</small>
+                    </td>
+                    <td><span class="cat-chip red">{{ g.categoriaGastoNombre }}</span></td>
+                    <td class="cell-desc">{{ g.descripcion }}</td>
+                    <td><span class="user-chip">{{ g.nombreUsuario || 'Admin' }}</span></td>
+                    <td class="text-right cell-strong red">{{ g.monto | currency:'COP':'symbol':'1.0-0' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </ng-container>
     </div>
   `,
-  styles: [`
-    .header-card {
-      background: white;
-      border-radius: 24px;
-      padding: 20px;
-      margin-bottom: 24px;
-      border: 1px solid #eee;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    }
-    .header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .title-group h1 {
-      margin: 0;
-      font-weight: 800;
-      background: linear-gradient(45deg, #C2185B, #E91E63);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .title-group p { margin: 0; color: #666; font-size: 14px; }
-    
-    .date-filter-group { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-    .date-picker-single { width: 170px; }
-    .date-picker-single ::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; }
-    /* Fix datepicker visibility against white background */
-    .date-picker-single ::ng-deep .mdc-text-field--outlined { background-color: #f8f9fa; border-radius: 8px; }
-    .date-picker-single ::ng-deep .mdc-floating-label { color: #C2185B !important; font-weight: 600; }
-    .date-picker-single ::ng-deep .mat-mdc-input-element { color: #333 !important; font-weight: 500; }
-    .date-picker-single ::ng-deep .mat-datepicker-toggle { color: #C2185B !important; }
-    .quick-filters { display: flex; gap: 10px; flex-wrap: wrap; }
-    .btn-filter { background: #C2185B; color: white; border-radius: 12px; height: 50px; padding: 0 24px; }
-    .kpi-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-    @media (max-width: 1100px) {
-      .kpi-container { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 600px) {
-      .kpi-container { grid-template-columns: 1fr; }
-    }
-    .kpi-card-luxury {
-      padding: 24px;
-      border-radius: 24px;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    }
-    .sales-card { background: linear-gradient(135deg, #AD1457, #E91E63); }
-    .expenses-card { background: linear-gradient(135deg, #D32F2F, #FF5252); }
-    .profit-card { background: linear-gradient(135deg, #2E7D32, #4CAF50); }
-    .cashflow-card { background: linear-gradient(135deg, #0288D1, #03A9F4); }
-    .kpi-icon { font-size: 32px; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 15px; }
-    .kpi-label { font-size: 14px; font-weight: 700; opacity: 0.9; letter-spacing: 1px; }
-    .kpi-value { font-size: 36px; font-weight: 800; margin: 0; letter-spacing: -1px; }
-    .kpi-value.negative { color: #ffdada; }
-
-    .charts-grid-triple {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-    @media (max-width: 900px) {
-      .charts-grid-triple { grid-template-columns: 1fr; }
-    }
-    .balance-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 25px;
-    }
-    .balance-card {
-      width: 100%;
-      max-width: 600px;
-    }
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-    .chart-card { min-height: 300px; display: flex; flex-direction: column; }
-    .chart-content { flex: 1; position: relative; padding: 10px !important; max-height: 250px; }
-    .full-width-chart { grid-column: 1 / -1; min-height: 350px; }
-    canvas { width: 100% !important; height: 100% !important; max-height: 240px; }
-    
-    .chart-title-group { display: flex; align-items: center; gap: 12px; }
-    .chart-emoji { font-size: 26px; }
-    ::ng-deep mat-card-title { font-size: 22px !important; font-weight: 800 !important; }
-    
-    .mini-table-container { padding: 10px 15px; }
-    .empty-state-mini { padding: 20px; text-align: center; color: #ccc; font-size: 12px; }
-
-    .bottom-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-      gap: 25px;
-    }
-    .luxury-table-card { border-radius: 24px; border: 1px solid #f0f0f0; }
-    .table-container { padding: 0 15px 15px; overflow-x: auto; }
-    .cat-badge-mini {
-      font-size: 9px;
-      padding: 2px 6px;
-      border-radius: 8px;
-      color: white;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-left: 5px;
-    }
-    .prod-info-mini {
-      display: flex;
-      align-items: center;
-      margin-bottom: 2px;
-      white-space: nowrap;
-    }
-    .total-col {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-    .subtle-text { color: #999; font-size: 12px; }
-    .premium-table { width: 100%; border-collapse: collapse; }
-    .premium-table th { text-align: left; padding: 18px 12px; border-bottom: 2px solid #f8f9fa; color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-    .premium-table td { padding: 16px 12px; border-bottom: 1px solid #fcfcfc; font-weight: 600; color: #333; font-size: 16px; }
-    .premium-table.mini td { padding: 12px; font-size: 15px; }
-    
-    .text-right { text-align: right; }
-    .monto-negativo { color: #d32f2f; }
-    .category-name { color: #C2185B; font-weight: 700; }
-    .category-name.green { color: #2E7D32; }
-    .category-name.red { color: #D32F2F; }
-    .green { color: #2E7D32 !important; }
-    .red { color: #D32F2F !important; }
-
-    .rank-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      background: #f0f0f0;
-      color: #777;
-      border-radius: 50%;
-      font-size: 11px;
-      font-weight: 800;
-    }
-    tr:nth-child(1) .rank-badge { background: #FFD700; color: #856404; }
-    tr:nth-child(2) .rank-badge { background: #C0C0C0; color: #383d41; }
-    tr:nth-child(3) .rank-badge { background: #CD7F32; color: #721c24; }
-
-    .progress-bar-small { width: 100%; min-width: 80px; height: 8px; background: #f0f0f0; border-radius: 10px; overflow: hidden; margin-left: auto; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, #E91E63, #FF80AB); border-radius: 10px; }
-    .progress-fill.expense { background: #FF5252; }
-
-    .total-row td { background: #fffafb; font-weight: 800; color: #C2185B; border-top: 2px solid #C2185B; }
-    .empty-state { padding: 40px; text-align: center; color: #999; font-style: italic; }
-
-    .full-width-card { margin-top: 25px; margin-bottom: 25px; grid-column: 1 / -1; }
-    .user-pill {
-      background: #f3e5f5;
-      color: #7b1fa2;
-      padding: 5px 12px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-    .date-col { color: #888; font-size: 14px; }
-    .desc-col { max-width: 300px; white-space: normal; line-height: 1.4; color: #555; }
-
-    .expense-group { margin-bottom: 8px; border-bottom: 1px solid #f5f5f5; padding-bottom: 8px; }
-    .expense-group-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 10px;
-      background: #fff5f7;
-      border-radius: 10px;
-      margin-bottom: 4px;
-    }
-    .expense-cat-name { font-weight: 800; color: #C2185B; font-size: 14px; }
-    .expense-cat-total { font-weight: 800; color: #d32f2f; font-size: 14px; }
-    .expense-sub-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 10px 8px 35px;
-      border-bottom: 1px solid #fafafa;
-    }
-    .expense-sub-name { color: #555; font-weight: 600; font-size: 13px; }
-    .expense-sub-name::before { content: '└  '; color: #ccc; }
-    .expense-sub-monto { color: #d32f2f; font-weight: 600; font-size: 13px; }
-    .total-row-final {
-      background: linear-gradient(135deg, #fce4ec, #fff5f7) !important;
-      border-top: 2px solid #C2185B;
-      margin-top: 10px;
-    }
-
-    ::ng-deep .white-datepicker { 
-      background: #ffffff !important; 
-      border-radius: 16px !important; 
-      overflow: visible !important; 
-      box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
-      border: 1px solid #e0e0e0 !important;
-      padding: 8px !important;
-    }
-    ::ng-deep .white-datepicker .mat-calendar { 
-      background: #ffffff !important; 
-    }
-    ::ng-deep .white-datepicker .mat-calendar-header {
-      color: #333 !important;
-    }
-    ::ng-deep .white-datepicker .mat-calendar-body-cell-content { 
-      color: #333333 !important; 
-      border-radius: 8px !important;
-    }
-    ::ng-deep .white-datepicker .mat-calendar-table-header { 
-      color: #999 !important; 
-    }
-    ::ng-deep .white-datepicker .mat-calendar-body-selected { 
-      background-color: #C2185B !important; 
-      color: white !important; 
-      font-weight: bold; 
-    }
-    ::ng-deep .white-datepicker .mat-calendar-body-today:not(.mat-calendar-body-selected) { 
-      border-color: #C2185B !important; 
-    }
-    ::ng-deep .white-datepicker .mat-calendar-period-button { 
-      color: #C2185B !important; 
-      font-weight: 800 !important; 
-    }
-    ::ng-deep .white-datepicker .mat-calendar-arrow { 
-      fill: #C2185B !important; 
-    }
-    /* Selectores para botones de navegación MDC */
-    ::ng-deep .white-datepicker .mat-mdc-button,
-    ::ng-deep .white-datepicker .mat-mdc-icon-button {
-      color: #C2185B !important;
-    }
-    ::ng-deep .white-datepicker .mat-calendar-previous-button,
-    ::ng-deep .white-datepicker .mat-calendar-next-button {
-      color: #C2185B !important;
-      opacity: 1 !important;
-    }
-  `]
+  styles: []
 })
 export class Reportes implements OnInit, OnDestroy {
   private reporteService = inject(ReporteService);
@@ -688,16 +452,82 @@ export class Reportes implements OnInit, OnDestroy {
 
   private charts: Chart[] = [];
 
-  public getCategoryColor(name: string): string {
-    const n = name.toLowerCase();
-    if (n.includes('niña')) return '#ec407a';
-    if (n.includes('mujer')) return '#7b1fa2';
-    if (n.includes('niño')) return '#03a9f4';
-    if (n.includes('hombre')) return '#0d47a1';
-    // Colores por defecto para otras categorías
-    const others = ['#ff9800', '#ffeb3b', '#4caf50', '#009688', '#673ab7'];
-    const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return others[hash % others.length];
+  private copFmt = new Intl.NumberFormat('es-CO', {
+    style: 'currency', currency: 'COP', maximumFractionDigits: 0, minimumFractionDigits: 0
+  });
+
+  data = signal<DashboardResponse | null>(null);
+  loading = false;
+  today = new Date();
+
+  showVentas = signal(false);
+  showGastos = signal(false);
+
+  range = new FormGroup({
+    start: new FormControl<Date | null>(new Date(new Date().setDate(1))),
+    end: new FormControl<Date | null>(new Date())
+  });
+
+  metodosPago = computed<MetodoPagoCard[]>(() => {
+    const mapa = this.data()?.ventasPorMetodoPago || {};
+    const total = this.data()?.totalVentas || 0;
+    return Object.entries(mapa).map(([nombre, monto]) => {
+      const info = this.metodoInfo(nombre);
+      return {
+        nombre,
+        monto,
+        pct: total > 0 ? Math.round((monto / total) * 1000) / 10 : 0,
+        ...info
+      };
+    }).sort((a, b) => b.monto - a.monto);
+  });
+
+  productosTop10 = computed(() => this.productosMasVendidos().slice(0, 10));
+
+  private metodoInfo(nombre: string): { icon: string; color: string; bg: string } {
+    const n = nombre.toLowerCase();
+    if (n.includes('efectivo')) return { icon: 'payments', color: '#2e7d32', bg: '#e8f5e9' };
+    if (n.includes('nequi')) return { icon: 'smartphone', color: '#6a1b9a', bg: '#f3e5f5' };
+    if (n.includes('daviplata')) return { icon: 'smartphone', color: '#c62828', bg: '#ffebee' };
+    if (n.includes('transfer') || n.includes('consign')) return { icon: 'account_balance', color: '#1565c0', bg: '#e3f2fd' };
+    if (n.includes('tarjeta') || n.includes('credito') || n.includes('debito')) {
+      return { icon: 'credit_card', color: '#ef6c00', bg: '#fff3e0' };
+    }
+    return { icon: 'swap_horiz', color: '#d81b60', bg: '#fce4ec' };
+  }
+
+  // Paleta cualitativa tipo Tableau: tonos bien separados en hue y luminosidad,
+  // diseñada para distinguirse incluso en monitores de baja calidad.
+  private readonly DONUT_PALETTE = [
+    '#4e79a7', // azul
+    '#f28e2b', // naranja
+    '#59a14f', // verde
+    '#e15759', // rojo
+    '#76b7b2', // teal
+    '#edc948', // amarillo
+    '#b07aa1', // violeta
+    '#ff9da7', // rosa
+    '#9c755f', // marrón
+    '#7f7f7f'  // gris
+  ];
+
+  private sortedEntries(map: { [key: string]: number }): [string, number][] {
+    return Object.entries(map).sort((a, b) => b[1] - a[1]);
+  }
+
+  private colorForIndex(i: number): string {
+    return this.DONUT_PALETTE[i % this.DONUT_PALETTE.length];
+  }
+
+  ngOnInit() {
+    this.routerSub = this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.today = new Date();
+      this.range.patchValue({ end: new Date() });
+      this.cargarReporte();
+    });
+    this.cargarReporte();
   }
 
   ngOnDestroy() {
@@ -708,27 +538,6 @@ export class Reportes implements OnInit, OnDestroy {
   private destroyCharts() {
     this.charts.forEach(c => c.destroy());
     this.charts = [];
-  }
-  
-  data = signal<DashboardResponse | null>(null);
-  loading = false;
-  today = new Date();
-
-  range = new FormGroup({
-    start: new FormControl<Date | null>(new Date(new Date().setDate(1))),
-    end: new FormControl<Date | null>(new Date())
-  });
-
-  ngOnInit() {
-    // Recargar el reporte cada vez que el usuario navega a esta pantalla
-    this.routerSub = this.router.events.pipe(
-      filter(e => e instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.today = new Date();
-      this.range.patchValue({ end: new Date() });
-      this.cargarReporte();
-    });
-    this.cargarReporte();
   }
 
   formatDate(date: Date): string {
@@ -784,24 +593,6 @@ export class Reportes implements OnInit, OnDestroy {
       .sort((a, b) => b.cantidad - a.cantidad);
   }
 
-  ventasPorCategoria() {
-    const list = this.data()?.ventasPorCategoria || {};
-    return Object.entries(list).map(([nombre, monto]) => ({ nombre, monto }))
-      .sort((a, b) => b.monto - a.monto);
-  }
-
-  gananciasPorCategoria() {
-    const list = this.data()?.gananciasPorCategoria || {};
-    return Object.entries(list).map(([nombre, monto]) => ({ nombre, monto }))
-      .sort((a, b) => b.monto - a.monto);
-  }
-
-  gastosPorCategoria() {
-    const list = this.data()?.gastosPorCategoria || {};
-    return Object.entries(list).map(([nombre, monto]) => ({ nombre, monto }))
-      .sort((a, b) => b.monto - a.monto);
-  }
-
   gastosJerarquicos = computed(() => {
     const map = this.data()?.gastosDesglosados || {};
     return Object.entries(map).map(([categoria, subMap]) => {
@@ -812,70 +603,140 @@ export class Reportes implements OnInit, OnDestroy {
     }).sort((a, b) => b.total - a.total);
   });
 
+  resumenCategorias = computed(() => {
+    const d = this.data();
+    if (!d) return [];
+    const nombres = new Set<string>([
+      ...Object.keys(d.ventasPorCategoria),
+      ...Object.keys(d.gananciasPorCategoria)
+    ]);
+    const filas = Array.from(nombres).map(categoria => {
+      const ventas = d.ventasPorCategoria[categoria] || 0;
+      const ganancia = d.gananciasPorCategoria[categoria] || 0;
+      const margen = ventas > 0 ? (ganancia / ventas) * 100 : 0;
+      return { categoria, ventas, ganancia, margen };
+    }).sort((a, b) => b.ventas - a.ventas);
+
+    const maxVentas = Math.max(...filas.map(f => f.ventas), 1);
+    const maxGanancia = Math.max(...filas.map(f => Math.abs(f.ganancia)), 1);
+    return filas.map(f => ({
+      ...f,
+      ventasPct: (f.ventas / maxVentas) * 100,
+      gananciaPct: (Math.abs(f.ganancia) / maxGanancia) * 100
+    }));
+  });
+
+  totalesResumen = computed(() => {
+    const filas = this.resumenCategorias();
+    const ventas = filas.reduce((s, f) => s + f.ventas, 0);
+    const ganancia = filas.reduce((s, f) => s + f.ganancia, 0);
+    return { ventas, ganancia, margen: ventas > 0 ? (ganancia / ventas) * 100 : 0 };
+  });
+
+  getCatColor(name: string): string {
+    const n = name.toLowerCase();
+    if (n.includes('niña') || n.includes('nina')) return '#ff9da7';
+    if (n.includes('mujer')) return '#b07aa1';
+    if (n.includes('niño') || n.includes('nino')) return '#4e79a7';
+    if (n.includes('hombre')) return '#76b7b2';
+    const hash = name.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+    return this.DONUT_PALETTE[hash % this.DONUT_PALETTE.length];
+  }
+
+  private money(value: number): string {
+    return this.copFmt.format(value);
+  }
+
   private initCharts() {
     this.zone.runOutsideAngular(() => {
       this.destroyCharts();
       const d = this.data();
       if (!d) return;
 
-      // Chart 1: Ventas por Categoría
+      const legendOpts = {
+        position: 'bottom' as const,
+        labels: {
+          usePointStyle: true, pointStyle: 'circle', boxWidth: 8, boxHeight: 8,
+          padding: 14, font: { family: 'Outfit', size: 11, weight: 500 as const }, color: '#5f6368'
+        }
+      };
+
+      const doughnutBase = {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '66%',
+        plugins: {
+          legend: legendOpts,
+          tooltip: {
+            backgroundColor: '#1a1a1a', padding: 12, cornerRadius: 10,
+            titleFont: { family: 'Outfit', weight: 700 as const },
+            bodyFont: { family: 'Outfit' },
+            callbacks: { label: (ctx: any) => ' ' + this.money(Number(ctx.parsed)) }
+          }
+        }
+      };
+
+      // Ventas por categoría
       if (this.catChartRef) {
         const ctx = this.catChartRef.nativeElement.getContext('2d');
         if (ctx) {
-          const labels = Object.keys(d.ventasPorCategoria);
+          const entries = this.sortedEntries(d.ventasPorCategoria);
           this.charts.push(new Chart(ctx, {
             type: 'doughnut',
             data: {
-              labels: labels,
+              labels: entries.map(e => e[0]),
               datasets: [{
-                data: Object.values(d.ventasPorCategoria),
-                backgroundColor: labels.map(l => this.getCategoryColor(l))
+                data: entries.map(e => e[1]),
+                backgroundColor: entries.map((_, i) => this.colorForIndex(i)),
+                borderWidth: 3, borderColor: '#fff', hoverOffset: 8
               }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+            options: doughnutBase
           }));
         }
       }
 
-      // Chart 2: Ganancias por Categoría
+      // Ganancias por categoría
       if (this.profitChartRef) {
         const ctx = this.profitChartRef.nativeElement.getContext('2d');
         if (ctx) {
-          const labels = Object.keys(d.gananciasPorCategoria);
+          const entries = this.sortedEntries(d.gananciasPorCategoria);
           this.charts.push(new Chart(ctx, {
             type: 'doughnut',
             data: {
-              labels: labels,
+              labels: entries.map(e => e[0]),
               datasets: [{
-                data: Object.values(d.gananciasPorCategoria),
-                backgroundColor: labels.map(l => this.getCategoryColor(l))
+                data: entries.map(e => e[1]),
+                backgroundColor: entries.map((_, i) => this.colorForIndex(i)),
+                borderWidth: 3, borderColor: '#fff', hoverOffset: 8
               }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+            options: doughnutBase
           }));
         }
       }
 
-      // Chart 3: Gastos por Categoría
+      // Gastos por categoría
       if (this.expChartRef) {
         const ctx = this.expChartRef.nativeElement.getContext('2d');
         if (ctx) {
+          const entries = this.sortedEntries(d.gastosPorCategoria);
           this.charts.push(new Chart(ctx, {
             type: 'doughnut',
             data: {
-              labels: Object.keys(d.gastosPorCategoria),
+              labels: entries.map(e => e[0]),
               datasets: [{
-                data: Object.values(d.gastosPorCategoria),
-                // Paleta variada para distinguir categorías de gasto (Nómina, Servicios, etc.)
-                backgroundColor: ['#f44336', '#ff9800', '#ffeb3b', '#795548', '#607d8b', '#9e9e9e']
+                data: entries.map(e => e[1]),
+                backgroundColor: entries.map((_, i) => this.colorForIndex(i)),
+                borderWidth: 3, borderColor: '#fff', hoverOffset: 8
               }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+            options: doughnutBase
           }));
         }
       }
 
-      // Chart 4: Balance Ingresos vs Egresos
+      // Balance ingresos vs egresos
       if (this.compChartRef) {
         const ctx = this.compChartRef.nativeElement.getContext('2d');
         if (ctx) {
@@ -884,28 +745,42 @@ export class Reportes implements OnInit, OnDestroy {
             data: {
               labels: ['Ingresos', 'Egresos'],
               datasets: [{
-                label: 'Pesos ($)',
+                label: 'Pesos',
                 data: [d.totalVentas, d.totalGastos + d.totalSueldos],
-                backgroundColor: ['#4CAF50', '#F44336'],
-                borderRadius: 20, // Más redondeado
-                barThickness: 50
+                backgroundColor: ['#2e7d32', '#c62828'],
+                borderRadius: 12, barThickness: 56
               }]
             },
             options: {
               responsive: true,
               maintainAspectRatio: false,
-              scales: { 
-                y: { 
-                   beginAtZero: true, 
-                   grid: { display: true, color: '#f5f5f5' },
-                   border: { display: false }
-                }, 
-                x: { 
-                   grid: { display: false },
-                   border: { display: false }
-                } 
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  grid: { color: '#f3f4f6' },
+                  border: { display: false },
+                  ticks: {
+                    font: { family: 'Outfit', size: 11 }, color: '#5f6368',
+                    callback: (value: any) => value >= 1000000
+                      ? '$' + (Number(value) / 1000000).toFixed(1) + 'M'
+                      : '$' + Number(value).toLocaleString('es-CO')
+                  }
+                },
+                x: {
+                  grid: { display: false },
+                  border: { display: false },
+                  ticks: { font: { family: 'Outfit', size: 12, weight: 600 as const }, color: '#1a1a1a' }
+                }
               },
-              plugins: { legend: { display: false } }
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  backgroundColor: '#1a1a1a', padding: 12, cornerRadius: 10,
+                  titleFont: { family: 'Outfit', weight: 700 as const },
+                  bodyFont: { family: 'Outfit' },
+                  callbacks: { label: (ctx: any) => ' ' + this.money(Number(ctx.parsed.y)) }
+                }
+              }
             }
           }));
         }
