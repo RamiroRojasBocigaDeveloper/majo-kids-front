@@ -1,0 +1,149 @@
+/* Módulo Inversión — scope: .inversion-page */
+.inversion-page { display: block; }
+
+.inversion-page .header-card {
+  margin-bottom: 20px; border-radius: 20px; background: var(--bg-card);
+  border: 1px solid var(--border-color); box-shadow: var(--luxury-shadow);
+}
+.inversion-page .header-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.inversion-page .title-group h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; color: var(--dark-text); }
+.inversion-page .title-group p { margin: 4px 0 0; color: var(--subtle-text); font-size: 0.92rem; }
+.inversion-page .quick-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.inversion-page .quick-filters button { border-radius: 10px; font-weight: 600; }
+.inversion-page .btn-filter { background: var(--primary-pink); color: #fff; }
+.inversion-page .btn-filter mat-icon { margin-right: 4px; }
+.inversion-page .mode-row {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border-color);
+}
+.inversion-page .mode-chip {
+  display: inline-flex; align-items: center; gap: 6px; background: #fce4ec; color: #ad1457;
+  font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px;
+}
+.inversion-page .mode-chip mat-icon { font-size: 15px; width: 15px; height: 15px; }
+.inversion-page .mode-hint { color: var(--subtle-text); }
+
+/* KPIs */
+.inversion-page .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.inversion-page .kpi-card {
+  display: flex; align-items: center; gap: 14px; background: var(--bg-card);
+  border: 1px solid var(--border-color); border-radius: 18px; padding: 20px;
+  box-shadow: var(--luxury-shadow); position: relative; overflow: hidden;
+}
+.inversion-page .kpi-card::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; border-radius: 4px; background: var(--accent); }
+.inversion-page .accent-pink { --accent: linear-gradient(180deg,#d81b60,#f06292); --icon-bg:#fce4ec; --icon-color:#d81b60; }
+.inversion-page .accent-amber { --accent: linear-gradient(180deg,#ef6c00,#ffa726); --icon-bg:#fff3e0; --icon-color:#ef6c00; }
+.inversion-page .accent-red { --accent: linear-gradient(180deg,#c62828,#ef5350); --icon-bg:#ffebee; --icon-color:#c62828; }
+.inversion-page .accent-green { --accent: linear-gradient(180deg,#2e7d32,#66bb6a); --icon-bg:#e8f5e9; --icon-color:#2e7d32; }
+.inversion-page .kpi-icon {
+  display: flex; align-items: center; justify-content: center; width: 52px; height: 52px;
+  border-radius: 14px; flex-shrink: 0; background: var(--icon-bg); color: var(--icon-color);
+}
+.inversion-page .kpi-info { display: flex; flex-direction: column; min-width: 0; }
+.inversion-page .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--subtle-text); }
+.inversion-page .kpi-value {
+  font-size: 1.35rem; font-weight: 800; color: var(--dark-text); letter-spacing: -0.5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.inversion-page .kpi-sub { font-size: 11px; color: var(--subtle-text); margin-top: 2px; }
+
+/* Panels */
+.inversion-page .panel {
+  background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px;
+  box-shadow: var(--luxury-shadow); padding: 24px; margin-bottom: 20px;
+}
+.inversion-page .section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.inversion-page .section-head.compact { margin-bottom: 16px; }
+.inversion-page .section-icon {
+  display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;
+  border-radius: 14px; flex-shrink: 0; color: #fff;
+  background: linear-gradient(135deg, var(--primary-pink), var(--premium-accent));
+}
+.inversion-page .section-icon.small { width: 40px; height: 40px; border-radius: 12px; }
+.inversion-page .section-icon.small mat-icon { font-size: 20px; width: 20px; height: 20px; }
+.inversion-page .section-icon.small.pink { background: linear-gradient(135deg,#d81b60,#f06292); }
+.inversion-page .section-icon.small.red { background: linear-gradient(135deg,#c62828,#ef5350); }
+.inversion-page .section-titles .eyebrow {
+  display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--subtle-text); margin-bottom: 2px;
+}
+.inversion-page .section-titles h2 { margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--dark-text); letter-spacing: -0.3px; }
+.inversion-page .section-titles h3 { margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--dark-text); letter-spacing: -0.2px; }
+.inversion-page .empty-inline { color: var(--subtle-text); font-size: 0.9rem; margin: 0; padding: 8px 0; }
+
+/* Fórmula */
+.inversion-page .formula { display: flex; align-items: stretch; gap: 14px; flex-wrap: wrap; }
+.inversion-page .formula-box {
+  flex: 1 1 200px; display: flex; flex-direction: column; gap: 4px;
+  background: #fcfcfd; border: 1px solid var(--border-color); border-radius: 16px; padding: 18px;
+}
+.inversion-page .formula-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--subtle-text); }
+.inversion-page .formula-box strong { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.4px; color: var(--dark-text); font-variant-numeric: tabular-nums; }
+.inversion-page .formula-box.result strong { color: var(--primary-pink); }
+.inversion-page .formula-box small { font-size: 11px; color: var(--subtle-text); }
+.inversion-page .formula-op { display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 800; color: var(--primary-pink); }
+.inversion-page .history-line {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border-color);
+  font-size: 0.9rem; color: var(--subtle-text);
+}
+.inversion-page .history-line strong { font-size: 1.1rem; font-weight: 800; color: var(--dark-text); font-variant-numeric: tabular-nums; }
+.inversion-page .history-line.total { margin-top: 8px; padding-top: 12px; }
+.inversion-page .history-line.total span { font-weight: 700; color: var(--dark-text); }
+.inversion-page .history-line.total strong { color: var(--primary-pink); font-size: 1.3rem; }
+
+/* Colapsables */
+.inversion-page .toggle-head {
+  display: flex; justify-content: space-between; align-items: center; width: 100%;
+  gap: 12px; flex-wrap: wrap;
+  background: none; border: 0; padding: 6px 8px; margin: -6px -8px 12px;
+  cursor: pointer; text-align: left; border-radius: 12px; color: inherit; font: inherit;
+  transition: background 0.18s ease;
+}
+.inversion-page .toggle-head:hover { background: #fdf2f8; }
+.inversion-page .toggle-head:focus-visible { outline: 2px solid var(--primary-pink); outline-offset: 2px; }
+.inversion-page .toggle-head .section-head { margin-bottom: 0; }
+.inversion-page .action-chip {
+  display: inline-flex; align-items: center; gap: 6px; background: #fff;
+  border: 1.5px solid var(--primary-pink); color: var(--primary-pink); border-radius: 999px;
+  padding: 6px 12px; font-size: 0.8rem; font-weight: 700; white-space: nowrap;
+}
+.inversion-page .action-chip.open { background: var(--primary-pink); color: #fff; }
+.inversion-page .action-chip mat-icon { font-size: 18px; width: 18px; height: 18px; transition: transform 0.2s ease; }
+.inversion-page .action-chip.open mat-icon { transform: rotate(180deg); }
+.inversion-page .collapse-body { animation: invFade 0.25s ease; }
+@keyframes invFade { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Dos columnas y tabla */
+.inversion-page .two-col { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; }
+.inversion-page .two-col .panel { margin-bottom: 20px; min-width: 0; }
+.inversion-page .table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid var(--border-color); }
+.inversion-page .data-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.inversion-page .data-table thead th {
+  text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px;
+  color: var(--subtle-text); padding: 12px 14px; background: #fafafa;
+  border-bottom: 1px solid var(--border-color); white-space: nowrap;
+}
+.inversion-page .data-table tbody td { padding: 11px 14px; border-bottom: 1px solid #f3f4f6; color: var(--dark-text); vertical-align: middle; }
+.inversion-page .data-table tbody tr:last-child td { border-bottom: none; }
+.inversion-page .text-right { text-align: right; }
+.inversion-page .cell-money { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Gastos por categoría */
+.inversion-page .expense-list { display: flex; flex-direction: column; gap: 16px; }
+.inversion-page .expense-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.inversion-page .expense-monto { font-size: 0.86rem; font-weight: 700; color: #c62828; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.inversion-page .expense-bar { height: 8px; border-radius: 8px; background: #f3f4f6; overflow: hidden; }
+.inversion-page .expense-fill { height: 100%; border-radius: 8px; background: linear-gradient(90deg,#c62828,#ef5350); }
+
+/* Nota */
+.inversion-page .note-panel { display: flex; align-items: flex-start; gap: 14px; font-size: 0.86rem; line-height: 1.55; color: var(--subtle-text); }
+.inversion-page .note-panel mat-icon { color: var(--primary-pink); flex-shrink: 0; }
+
+@media (max-width: 1024px) {
+  .inversion-page .two-col { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .inversion-page .formula-op { display: none; }
+  .inversion-page .kpi-value { font-size: 1.2rem; }
+}

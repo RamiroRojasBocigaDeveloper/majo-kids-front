@@ -35,6 +35,11 @@ export const routes: Routes = [
         data: { expectedRoles: ['ADMINISTRADOR', 'JEFE'] }
       },
       {
+        path: 'inversion',
+        loadComponent: () => import('./inversion/inversion').then(m => m.Inversion),
+        data: { expectedRoles: ['ADMINISTRADOR'] }
+      },
+      {
         path: 'usuarios',
         loadComponent: () => import('./usuarios/usuarios').then(m => m.Usuarios),
         data: { expectedRoles: ['ADMINISTRADOR'] }

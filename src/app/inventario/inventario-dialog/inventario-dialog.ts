@@ -48,7 +48,7 @@ import { Producto } from '../../productos/producto';
           <ng-container *ngIf="form.get('tipo')?.value === 'ENTRADA'">
             <div style="display: flex; gap: 10px; margin-top: 10px;">
               <mat-form-field appearance="outline">
-                <mat-label>Nuevo Precio Costo</mat-label>
+                <mat-label>Precio costo</mat-label>
                 <input matInput type="number" formControlName="nuevoPrecioCompra">
               </mat-form-field>
               
@@ -58,7 +58,7 @@ import { Producto } from '../../productos/producto';
               </mat-form-field>
             </div>
             <small style="color: gray; margin-bottom: 10px;">
-              (Opcional: Llénelo si el costo unitario cambió)
+              El costo es obligatorio para entradas: se usa para calcular la inversión en mercancía.
             </small>
           </ng-container>
         </div>
@@ -91,6 +91,21 @@ export class InventarioDialog {
     nuevoPrecioCompra: [null],
     nuevoPrecioVenta: [null]
   });
+
+  constructor() {
+    this.form.get('tipo')!.valueChanges.subscribe((tipo) => this.aplicarValidadoresCosto(tipo));
+    this.aplicarValidadoresCosto(this.form.get('tipo')!.value);
+  }
+
+  private aplicarValidadoresCosto(tipo: string) {
+    const costo = this.form.get('nuevoPrecioCompra')!;
+    if (tipo === 'ENTRADA') {
+      costo.setValidators([Validators.required, Validators.min(0)]);
+    } else {
+      costo.clearValidators();
+    }
+    costo.updateValueAndValidity();
+  }
 
   onCancel() {
     this.dialogRef.close();
