@@ -1,0 +1,202 @@
+<div class="inversion-page">
+  <mat-card class="header-card">
+    <div class="header-content">
+      <div class="title-group">
+        <h1>Inversión</h1>
+        <p>Mercancía inicial, compras nuevas y gastos operativos</p>
+      </div>
+
+      <div class="quick-filters">
+        <button mat-flat-button class="btn-filter" (click)="cargar()">
+          <mat-icon>refresh</mat-icon> Actualizar
+        </button>
+      </div>
+    </div>
+
+    <div class="mode-row">
+      <span class="mode-chip"><mat-icon>schedule</mat-icon>Inversión acumulada desde el corte</span>
+      <span class="mode-hint">Solo se incluyen las compras nuevas y la categoría Logística para surtir.</span>
+    </div>
+  </mat-card>
+
+  <div class="progress-container" style="margin-bottom: 16px;" *ngIf="loading()">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <ng-container *ngIf="data() as d">
+    <div class="kpi-grid">
+      <div class="kpi-card accent-pink">
+        <div class="kpi-icon"><mat-icon>inventory_2</mat-icon></div>
+        <div class="kpi-info">
+          <span class="kpi-label">Inversión inicial en mercancía</span>
+          <span class="kpi-value">{{ d.saldoInicialMercancia | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
+          <span class="kpi-sub">Stock actual + mercancía vendida</span>
+        </div>
+      </div>
+
+      <div class="kpi-card accent-amber">
+        <div class="kpi-icon"><mat-icon>local_shipping</mat-icon></div>
+        <div class="kpi-info">
+          <span class="kpi-label">Compras nuevas</span>
+          <span class="kpi-value">{{ d.inversionMercanciaPeriodo | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
+          <span class="kpi-sub">Al costo de cada entrada</span>
+        </div>
+      </div>
+
+      <div class="kpi-card accent-red">
+        <div class="kpi-icon"><mat-icon>receipt_long</mat-icon></div>
+        <div class="kpi-info">
+          <span class="kpi-label">Gastos operativos</span>
+          <span class="kpi-value">{{ d.gastosOperativos | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
+          <span class="kpi-sub">Solo Logística para surtir</span>
+        </div>
+      </div>
+
+      <div class="kpi-card accent-green">
+        <div class="kpi-icon"><mat-icon>savings</mat-icon></div>
+        <div class="kpi-info">
+          <span class="kpi-label">Total invertido</span>
+          <span class="kpi-value">{{ d.totalInvertidoAcumulado | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
+          <span class="kpi-sub">Inicial + compras nuevas + gastos operativos</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="panel">
+      <div class="section-head">
+        <div class="section-icon"><mat-icon>calculate</mat-icon></div>
+        <div class="section-titles">
+          <span class="eyebrow">Cómo se compone</span>
+          <h2>Inversión en mercancía</h2>
+        </div>
+      </div>
+
+      <div class="formula">
+        <div class="formula-box">
+          <span class="formula-label">Inversión inicial</span>
+          <strong>{{ d.saldoInicialMercancia | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+          <small>{{ d.productosConSaldoInicial || 0 }} productos en el corte</small>
+        </div>
+
+        <span class="formula-op">+</span>
+
+        <div class="formula-box">
+          <span class="formula-label">Compras nuevas</span>
+          <strong>{{ d.inversionMercanciaPeriodo | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+          <small>Cantidad × costo de cada entrada</small>
+        </div>
+
+        <span class="formula-op">=</span>
+
+        <div class="formula-box result">
+          <span class="formula-label">Inversión en mercancía</span>
+          <strong>{{ d.inversionMercanciaTotal | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+          <small>Capital histórico en inventario</small>
+        </div>
+      </div>
+
+      <div class="history-line">
+        <span>Gastos operativos (Logística para surtir)</span>
+        <strong>{{ d.gastosOperativos | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+      </div>
+
+      <div class="history-line total">
+        <span>Total invertido</span>
+        <strong>{{ d.totalInvertidoAcumulado | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+      </div>
+    </section>
+
+    <div class="two-col">
+      <section class="panel">
+        <button class="toggle-head" (click)="showCompras.set(!showCompras())"
+                [attr.aria-expanded]="showCompras()" aria-label="Mostrar u ocultar compras nuevas por producto">
+          <div class="section-head compact">
+            <div class="section-icon small pink"><mat-icon>shopping_bag</mat-icon></div>
+            <div class="section-titles">
+              <span class="eyebrow">{{ compras().length }} producto(s)</span>
+              <h3>Compras nuevas por producto</h3>
+            </div>
+          </div>
+          <span class="action-chip" [class.open]="showCompras()">
+            <span>{{ showCompras() ? 'Ocultar detalle' : 'Ver detalle' }}</span>
+            <mat-icon>{{ showCompras() ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </span>
+        </button>
+
+        <div class="collapse-body" *ngIf="showCompras()">
+          <div class="table-wrap" *ngIf="compras().length > 0; else sinCompras">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Ref.</th>
+                  <th>Producto</th>
+                  <th class="text-right">Cantidad</th>
+                  <th class="text-right">Invertido</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let c of compras()">
+                  <td class="cell-ref">{{ c.referencia }}</td>
+                  <td><strong>{{ c.nombre }}</strong></td>
+                  <td class="text-right">{{ c.cantidad }} u.</td>
+                  <td class="text-right cell-money">
+                    {{ c.monto | currency: 'COP' : 'symbol' : '1.0-0' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <ng-template #sinCompras>
+            <p class="empty-inline">Aún no hay compras nuevas registradas.</p>
+          </ng-template>
+        </div>
+      </section>
+
+      <section class="panel">
+        <button class="toggle-head" (click)="showGastos.set(!showGastos())"
+                [attr.aria-expanded]="showGastos()" aria-label="Mostrar u ocultar gastos operativos por subcategoría">
+          <div class="section-head compact">
+            <div class="section-icon small red"><mat-icon>category</mat-icon></div>
+            <div class="section-titles">
+              <span class="eyebrow">{{ gastos().length }} subcategoría(s)</span>
+              <h3>Gastos operativos por subcategoría</h3>
+            </div>
+          </div>
+          <span class="action-chip" [class.open]="showGastos()">
+            <span>{{ showGastos() ? 'Ocultar detalle' : 'Ver detalle' }}</span>
+            <mat-icon>{{ showGastos() ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </span>
+        </button>
+
+        <div class="collapse-body" *ngIf="showGastos()">
+          <div class="expense-list" *ngIf="gastos().length > 0; else sinGastos">
+            <div class="expense-row" *ngFor="let g of gastos()">
+              <div class="expense-top">
+                <span class="expense-name">{{ g.categoria }}</span>
+                <strong class="expense-monto">{{ g.monto | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+              </div>
+              <div class="expense-bar">
+                <div class="expense-fill" [style.width.%]="g.pct"></div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #sinGastos>
+            <p class="empty-inline">Aún no hay gastos operativos registrados.</p>
+          </ng-template>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel note-panel">
+      <mat-icon>info</mat-icon>
+      <div>
+        <strong>Cómo se calcula:</strong> la inversión inicial es el valor del stock actual más la
+        mercancía ya vendida. Cada compra nueva suma su cantidad por el costo de esa entrada y no
+        revaloriza el stock anterior: si el precio de compra cambia, solo la compra nueva entra con
+        el precio nuevo. En gastos operativos solo se cuenta la categoría Logística para surtir.
+      </div>
+    </section>
+  </ng-container>
+</div>
