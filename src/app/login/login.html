@@ -1,11 +1,15 @@
 <div class="login-container">
   <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>MajoKids</mat-card-title>
-      <mat-card-subtitle>Ingresa a tu cuenta</mat-card-subtitle>
-    </mat-card-header>
-    
+    <div class="brand-header">
+      <img src="logo.png" alt="MajoKids" class="main-logo">
+    </div>
+
     <mat-card-content>
+      <div class="welcome-block">
+        <h2 class="welcome-title">Bienvenido de nuevo</h2>
+        <p class="welcome-subtitle">Ingresa a tu cuenta para continuar</p>
+      </div>
+
       <div *ngIf="errorMessage()" class="error-alert">
         <mat-icon>error_outline</mat-icon>
         <span>{{ errorMessage() }}</span>
