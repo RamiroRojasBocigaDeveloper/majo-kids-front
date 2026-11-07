@@ -50,7 +50,7 @@
     0 40px 80px rgba(0, 0, 0, 0.38),
     0 8px 24px rgba(216, 27, 96, 0.18);
   border: 1px solid rgba(255, 255, 255, 0.75);
-  background: #fbf3ec; /* mismo crema del logo: cabecera y contenido son una sola sección */
+  background: #fcf5ef !important; /* crema del logo; !important vence al blanco global de mat-card */
   z-index: 10;
   animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
