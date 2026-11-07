@@ -1,44 +1,132 @@
-<div class="login-container">
-  <mat-card class="login-card">
-    <div class="brand-header">
-      <img src="logo.png" alt="MajoKids" class="main-logo">
-    </div>
+<div #scene class="login-scene" (mousemove)="onSceneMove($event)">
+  <div class="decor" aria-hidden="true">
+    <span class="doodle bow depth-1">
+      <i class="bow-loop bow-left"></i>
+      <i class="bow-loop bow-right"></i>
+      <i class="bow-knot"></i>
+      <i class="bow-tail bow-tail-left"></i>
+      <i class="bow-tail bow-tail-right"></i>
+    </span>
+    <mat-icon class="doodle star-a depth-2">auto_awesome</mat-icon>
+    <mat-icon class="doodle heart-a depth-3">favorite</mat-icon>
+    <mat-icon class="doodle heart-b depth-2">favorite</mat-icon>
+    <mat-icon class="doodle star-b depth-4">star</mat-icon>
+    <span class="doodle ring depth-1"></span>
+    <span class="doodle dot dot-a depth-4"></span>
+    <span class="doodle dot dot-b depth-2"></span>
+    <span class="doodle dot dot-c depth-3"></span>
+    <span class="doodle dot dot-d depth-1"></span>
+  </div>
 
-    <mat-card-content>
-      <div class="welcome-block">
-        <h2 class="welcome-title">Bienvenido de nuevo</h2>
-        <p class="welcome-subtitle">Ingresa a tu cuenta para continuar</p>
+  <main class="card-stage">
+    <div
+      #card
+      class="login-card"
+      [class.shake]="shake()"
+      (mousemove)="onCardMove($event)"
+    >
+      <span class="sheen" aria-hidden="true"></span>
+      <span class="ribbon">Bienvenida</span>
+
+      <header class="brand">
+        <button
+          class="logo-btn"
+          type="button"
+          (click)="onLogoClick()"
+          [class.wiggle]="logoWiggle()"
+          aria-label="Majo'Kids accesorios infantiles"
+        >
+          <img src="logo.png" alt="Majo'Kids Accesorios Infantiles" class="logo">
+        </button>
+      </header>
+
+      <div class="welcome">
+        <h2>¡Hola de nuevo!</h2>
+        <p>Qué alegría verte por aquí. Ingresa para continuar.</p>
       </div>
 
-      <div *ngIf="errorMessage()" class="error-alert">
-        <mat-icon>error_outline</mat-icon>
-        <span>{{ errorMessage() }}</span>
-      </div>
+      @if (errorMessage()) {
+        <div class="error-alert" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Correo Electrónico</mat-label>
-          <input matInput formControlName="email" type="email" placeholder="ejemplo@correo.com">
-          <mat-icon matPrefix>email</mat-icon>
-          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">El correo es obligatorio</mat-error>
-          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Formato de correo inválido</mat-error>
-        </mat-form-field>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+        <label class="field" [class.invalid]="showError('email')">
+          <span class="field-label">Correo electrónico</span>
+          <span class="field-control">
+            <mat-icon class="field-icon">alternate_email</mat-icon>
+            <input
+              type="email"
+              formControlName="email"
+              placeholder="tu@correo.com"
+              autocomplete="email"
+              (input)="clearError()"
+            >
+          </span>
+          @if (showError('email')) {
+            <span class="field-error">
+              {{ loginForm.get('email')?.hasError('required') ? 'El correo es obligatorio' : 'Formato de correo inválido' }}
+            </span>
+          }
+        </label>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Contraseña</mat-label>
-          <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" placeholder="Tu contraseña segura">
-          <mat-icon matPrefix>lock</mat-icon>
-          <button mat-icon-button matSuffix (click)="hide = !hide" type="button">
-            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
-          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">La contraseña es obligatoria</mat-error>
-          <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">Mínimo 6 caracteres</mat-error>
-        </mat-form-field>
+        <label class="field" [class.invalid]="showError('password')">
+          <span class="field-label">Contraseña</span>
+          <span class="field-control">
+            <mat-icon class="field-icon">lock</mat-icon>
+            <input
+              [type]="hidePassword() ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              (input)="clearError()"
+              (keyup)="onPasswordKey($event)"
+              (keydown)="onPasswordKey($event)"
+            >
+            <button
+              class="ghost-icon"
+              type="button"
+              (click)="togglePassword()"
+              [attr.aria-label]="hidePassword() ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+            >
+              <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </span>
+          @if (capsLock()) {
+            <span class="field-hint"><mat-icon>keyboard_capslock</mat-icon> Bloq Mayús está activado</span>
+          }
+          @if (showError('password')) {
+            <span class="field-error">
+              {{ loginForm.get('password')?.hasError('required') ? 'La contraseña es obligatoria' : 'Mínimo 6 caracteres' }}
+            </span>
+          }
+        </label>
 
-        <button mat-flat-button class="login-button full-width" [disabled]="loginForm.invalid || loading">
-          {{ loading ? 'Iniciando...' : 'INICIAR SESIÓN' }}
+        <div class="secure-row">
+          <span class="secure"><mat-icon>spa</mat-icon> Un espacio pensado para ti</span>
+        </div>
+
+        <button
+          #submitBtn
+          class="submit"
+          type="submit"
+          [disabled]="loading()"
+          (mousemove)="onButtonMove($event)"
+          (mouseleave)="onButtonLeave()"
+        >
+          @if (loading()) {
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Ingresando...</span>
+          } @else {
+            <span>Ingresar</span>
+            <mat-icon>arrow_forward</mat-icon>
+          }
         </button>
       </form>
-    </mat-card-content>
-  </mat-card>
+
+      <p class="foot">Hecho con cariño para Majo'Kids</p>
+    </div>
+  </main>
 </div>
