@@ -1,21 +1,12 @@
 <div #scene class="login-scene" (mousemove)="onSceneMove($event)">
   <div class="decor" aria-hidden="true">
-    <span class="doodle bow depth-1">
-      <i class="bow-loop bow-left"></i>
-      <i class="bow-loop bow-right"></i>
-      <i class="bow-knot"></i>
-      <i class="bow-tail bow-tail-left"></i>
-      <i class="bow-tail bow-tail-right"></i>
-    </span>
+    <mat-icon class="doodle gift depth-1">redeem</mat-icon>
     <mat-icon class="doodle star-a depth-2">auto_awesome</mat-icon>
     <mat-icon class="doodle heart-a depth-3">favorite</mat-icon>
-    <mat-icon class="doodle heart-b depth-2">favorite</mat-icon>
     <mat-icon class="doodle star-b depth-4">star</mat-icon>
     <span class="doodle ring depth-1"></span>
     <span class="doodle dot dot-a depth-4"></span>
-    <span class="doodle dot dot-b depth-2"></span>
     <span class="doodle dot dot-c depth-3"></span>
-    <span class="doodle dot dot-d depth-1"></span>
   </div>
 
   <main class="card-stage">
@@ -103,10 +94,6 @@
             </span>
           }
         </label>
-
-        <div class="secure-row">
-          <span class="secure"><mat-icon>spa</mat-icon> Un espacio pensado para ti</span>
-        </div>
 
         <button
           #submitBtn

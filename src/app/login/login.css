@@ -55,49 +55,14 @@
 .depth-3 { --depth: 1.7; animation-delay: -2.8s; }
 .depth-4 { --depth: 2.4; animation-delay: -4.2s; }
 
-.bow {
+.gift {
   top: 15%;
-  left: 6%;
-  width: 108px;
-  height: 78px;
-  opacity: 0.9;
+  left: 7%;
+  font-size: 52px;
+  width: 52px;
+  height: 52px;
+  color: rgba(181, 101, 107, 0.3);
 }
-
-.bow-loop {
-  position: absolute;
-  top: 12px;
-  width: 46px;
-  height: 34px;
-  border-radius: 60% 40% 55% 45%;
-  background: rgba(181, 101, 107, 0.2);
-  border: 2px solid rgba(181, 101, 107, 0.38);
-}
-
-.bow-left { left: 2px; transform: rotate(-16deg); }
-.bow-right { right: 2px; transform: rotate(16deg); }
-
-.bow-knot {
-  position: absolute;
-  top: 24px;
-  left: 50%;
-  width: 18px;
-  height: 18px;
-  margin-left: -9px;
-  border-radius: 50%;
-  background: rgba(181, 101, 107, 0.34);
-}
-
-.bow-tail {
-  position: absolute;
-  top: 40px;
-  width: 12px;
-  height: 30px;
-  border-radius: 4px;
-  background: rgba(181, 101, 107, 0.18);
-}
-
-.bow-tail-left { left: 30px; transform: rotate(16deg); }
-.bow-tail-right { right: 30px; transform: rotate(-16deg); }
 
 .star-a {
   top: 17%;
@@ -106,6 +71,7 @@
   width: 32px;
   height: 32px;
   color: rgba(200, 162, 74, 0.6);
+  animation: bob 7s ease-in-out infinite, twinkle 3.6s ease-in-out infinite;
 }
 
 .star-b {
@@ -115,6 +81,7 @@
   width: 24px;
   height: 24px;
   color: rgba(181, 101, 107, 0.45);
+  animation: bob 7s ease-in-out infinite -2s, twinkle 5s ease-in-out infinite;
 }
 
 .heart-a {
@@ -125,16 +92,7 @@
   height: 40px;
   color: rgba(181, 101, 107, 0.3);
   transform: rotate(-12deg);
-}
-
-.heart-b {
-  top: 62%;
-  right: 8%;
-  font-size: 26px;
-  width: 26px;
-  height: 26px;
-  color: rgba(200, 162, 74, 0.4);
-  transform: rotate(14deg);
+  animation: bob 7s ease-in-out infinite, heartbeat 4.5s ease-in-out infinite;
 }
 
 .ring {
@@ -144,6 +102,7 @@
   height: 66px;
   border: 2px dashed rgba(200, 162, 74, 0.35);
   border-radius: 50%;
+  animation: spin 26s linear infinite;
 }
 
 .dot {
@@ -151,9 +110,7 @@
 }
 
 .dot-a { top: 34%; left: 14%; width: 12px; height: 12px; background: rgba(181, 101, 107, 0.34); }
-.dot-b { top: 47%; left: 4%; width: 8px; height: 8px; background: rgba(200, 162, 74, 0.5); }
 .dot-c { bottom: 26%; right: 14%; width: 14px; height: 14px; background: rgba(181, 101, 107, 0.22); }
-.dot-d { top: 24%; right: 5%; width: 9px; height: 9px; background: rgba(200, 162, 74, 0.45); }
 
 .card-stage {
   position: relative;
@@ -167,17 +124,35 @@
   --mx: 50%;
   --my: 0%;
   position: relative;
-  width: min(396px, 100%);
-  padding: 52px 34px 26px;
-  border-radius: 30px;
+  isolation: isolate;
+  width: min(348px, 100%);
+  padding: 46px 30px 23px;
+  border-radius: 27px;
   background: var(--cream);
   border: 1px solid var(--rose-soft);
   box-shadow:
-    inset 0 0 0 7px var(--cream),
-    inset 0 0 0 8.5px #efd5cc,
-    0 34px 70px rgba(120, 60, 66, 0.18),
+    inset 0 0 0 6px var(--cream),
+    inset 0 0 0 7.5px #efd5cc,
+    0 30px 62px rgba(120, 60, 66, 0.18),
     0 8px 20px rgba(120, 60, 66, 0.08);
-  animation: cardIn 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: cardIn 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow:
+    0 0 42px 8px rgba(200, 162, 74, 0.26),
+    0 0 62px 18px rgba(181, 101, 107, 0.16);
+  animation: glow 7s ease-in-out infinite;
+}
+
+.login-card:hover {
+  transform: translateY(-4px);
 }
 
 .sheen {
@@ -190,18 +165,19 @@
 
 .ribbon {
   position: absolute;
-  top: -17px;
+  top: -15px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 8px 22px;
+  padding: 7px 19px;
   border-radius: 10px;
   background: linear-gradient(135deg, #a94f57, #c97b7b);
   color: #fff8f0;
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   box-shadow: 0 10px 22px rgba(140, 74, 80, 0.3);
+  animation: ribbonFloat 4.5s ease-in-out infinite;
 }
 
 .ribbon::before,
@@ -223,13 +199,14 @@
 
 .logo-btn {
   display: block;
-  width: min(204px, 100%);
+  width: min(180px, 100%);
   margin: 0 auto;
   padding: 0;
   border: 0;
   background: transparent;
   cursor: pointer;
   transition: transform 0.25s ease;
+  animation: logoFloat 6s ease-in-out infinite;
 }
 
 .logo-btn:hover {
@@ -249,13 +226,13 @@
 
 .welcome {
   text-align: center;
-  margin: 0 0 20px;
+  margin: 0 0 18px;
 }
 
 .welcome h2 {
   margin: 0 0 5px;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.4px;
   color: var(--rose-deep) !important;
@@ -263,32 +240,37 @@
 
 .welcome p {
   margin: 0;
-  font-size: 13.5px;
+  font-size: 12px;
   line-height: 1.5;
   color: var(--muted);
 }
 
 .field {
   display: block;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .field-label {
   display: block;
-  margin-bottom: 7px;
-  font-size: 10.5px;
+  margin-bottom: 6px;
+  font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #ab7280;
+  transition: color 0.2s ease;
+}
+
+.field:focus-within .field-label {
+  color: var(--gold);
 }
 
 .field-control {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 12px;
-  border-radius: 14px;
+  gap: 9px;
+  padding: 0 10px;
+  border-radius: 12px;
   background: var(--cream-2);
   border: 1.5px solid #ecd2cb;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
@@ -307,9 +289,9 @@
 
 .field-icon {
   flex: 0 0 auto;
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
   color: var(--rose);
   transition: transform 0.25s ease;
 }
@@ -321,12 +303,12 @@
 .field input {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 13px 0;
+  padding: 11px 0;
   border: 0;
   outline: 0;
   background: transparent;
   font-family: inherit;
-  font-size: 14.5px;
+  font-size: 13px;
   color: var(--ink) !important;
   -webkit-text-fill-color: var(--ink) !important;
 }
@@ -336,20 +318,15 @@
   -webkit-text-fill-color: #c4a9a9;
 }
 
-.field input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 40px var(--cream-2) inset;
-  -webkit-text-fill-color: var(--ink) !important;
-}
-
 .ghost-icon {
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 30px;
-  height: 30px;
+  width: 27px;
+  height: 27px;
   padding: 0;
   border: 0;
-  border-radius: 10px;
+  border-radius: 9px;
   background: transparent;
   color: #b58a95;
   cursor: pointer;
@@ -362,9 +339,9 @@
 }
 
 .ghost-icon mat-icon {
-  font-size: 19px;
-  width: 19px;
-  height: 19px;
+  font-size: 17px;
+  width: 17px;
+  height: 17px;
 }
 
 .field-error,
@@ -372,8 +349,8 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-top: 6px;
-  font-size: 12px;
+  margin-top: 5px;
+  font-size: 11px;
   font-weight: 500;
 }
 
@@ -387,25 +364,6 @@
   font-size: 16px;
 }
 
-.secure-row {
-  margin: 0 0 16px;
-}
-
-.secure {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #a88a54;
-}
-
-.secure mat-icon {
-  width: 16px;
-  height: 16px;
-  font-size: 16px;
-}
-
 .submit {
   --bx: 0px;
   --by: 0px;
@@ -413,22 +371,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 8px;
   width: 100%;
-  height: 50px;
+  height: 44px;
   border: 0;
   border-radius: 999px;
   overflow: hidden;
   background: linear-gradient(135deg, #a94f57 0%, #c97b7b 58%, #d99a93 100%);
   color: #fff8f0;
   font-family: inherit;
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
   box-shadow: 0 16px 30px rgba(140, 74, 80, 0.3);
   transform: translate(var(--bx), var(--by));
   transition: transform 0.16s ease-out, box-shadow 0.25s ease;
+  animation: buttonPulse 4.5s ease-in-out infinite;
 }
 
 .submit::before {
@@ -460,9 +419,9 @@
 }
 
 .submit mat-icon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
   transition: transform 0.25s ease;
 }
 
@@ -471,8 +430,8 @@
 }
 
 .spinner {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   border: 2px solid rgba(255, 248, 240, 0.35);
   border-top-color: #fff8f0;
@@ -482,15 +441,15 @@
 .error-alert {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  padding: 11px 12px;
-  margin: 0 0 16px;
-  border-radius: 14px;
+  gap: 9px;
+  padding: 10px 11px;
+  margin: 0 0 14px;
+  border-radius: 12px;
   border: 1px solid #eec2c2;
   border-left: 4px solid #cd4f57;
   background: linear-gradient(135deg, #fff6f4, #fdeceb);
   color: #b03a42;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -512,13 +471,26 @@
 }
 
 .foot {
-  margin: 18px 0 0;
+  margin: 16px 0 0;
   text-align: center;
-  font-size: 10.5px;
+  font-size: 9.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #b69999;
 }
+
+.brand,
+.welcome,
+.field,
+.foot {
+  animation: riseIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+.brand { animation-delay: 0.1s; }
+.welcome { animation-delay: 0.18s; }
+.field { animation-delay: 0.26s; }
+.field + .field { animation-delay: 0.34s; }
+.foot { animation-delay: 0.5s; }
 
 .login-card.shake {
   animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
@@ -527,6 +499,41 @@
 @keyframes bob {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.95; }
+}
+
+@keyframes heartbeat {
+  0%, 100% { scale: 1; }
+  45% { scale: 1.16; }
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.35; transform: scale(0.98); }
+  50% { opacity: 0.62; transform: scale(1.03); }
+}
+
+@keyframes logoFloat {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -5px; }
+}
+
+@keyframes ribbonFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+
+@keyframes buttonPulse {
+  0%, 100% { box-shadow: 0 16px 30px rgba(140, 74, 80, 0.3); }
+  50% { box-shadow: 0 16px 42px rgba(140, 74, 80, 0.48); }
+}
+
+@keyframes riseIn {
+  from { opacity: 0; translate: 0 14px; }
+  to { opacity: 1; translate: 0 0; }
 }
 
 @keyframes cardIn {
@@ -559,38 +566,44 @@
 
 @media (max-width: 600px) {
   .login-scene {
-    padding: 28px 12px;
+    padding: 22px 10px;
   }
 
   .login-card {
-    padding: 46px 20px 22px;
-    border-radius: 24px;
+    padding: 40px 18px 19px;
+    border-radius: 21px;
   }
 
   .ribbon {
-    padding: 7px 16px;
-    font-size: 9.5px;
+    padding: 6px 14px;
+    font-size: 8.5px;
   }
 
   .logo-btn {
-    width: min(172px, 100%);
+    width: min(151px, 100%);
   }
 
   .welcome h2 {
-    font-size: 22px;
+    font-size: 19.5px;
   }
 
-  .bow { top: 8%; left: -20px; transform: scale(0.8); }
+  .gift { top: 8%; left: -14px; transform: scale(0.8); }
   .ring { display: none; }
   .heart-a { bottom: 6%; left: 2%; }
-  .heart-b { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .doodle,
   .login-card,
+  .login-card::before,
   .logo-btn,
   .logo-btn.wiggle,
+  .ribbon,
+  .submit,
+  .brand,
+  .welcome,
+  .field,
+  .foot,
   .spinner,
   .error-alert,
   .login-card.shake {
@@ -600,7 +613,10 @@
   .doodle,
   .login-card,
   .submit,
-  .logo-btn {
+  .logo-btn,
+  .field-control,
+  .field-icon,
+  .field-label {
     transition: none;
   }
 }
