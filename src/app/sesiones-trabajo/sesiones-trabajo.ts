@@ -155,8 +155,12 @@ export class VentasEfectivoDialog {
           <span class="value info">{{ data.totalNoEfectivo | currency:'COP' }}</span>
         </div>
         <div class="resumen-item">
-          <span class="label">Total Gastos</span>
-          <span class="value neg">{{ data.totalGastos | currency:'COP' }}</span>
+          <span class="label">Gastos de caja (restan del efectivo)</span>
+          <span class="value neg">{{ data.totalGastosDeCaja | currency:'COP' }}</span>
+        </div>
+        <div class="resumen-item">
+          <span class="label">Gastos generales (no afectan la caja)</span>
+          <span class="value neg">{{ data.totalGastosGenerales | currency:'COP' }}</span>
         </div>
         <div class="divider"></div>
         <div class="resumen-item highlight" [ngClass]="getResultClass()">

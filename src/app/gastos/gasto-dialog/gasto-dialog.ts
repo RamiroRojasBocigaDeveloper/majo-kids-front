@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -86,8 +86,8 @@ import { provideNativeDateAdapter } from '@angular/material/core';
             <mat-hint>Si se deja vacío, se asignará a tu sesión actual</mat-hint>
           </mat-form-field>
 
-          <!-- Toggle solo para administradores -->
-          <div *ngIf="isAdmin()" class="tipo-gasto-toggle">
+          <!-- Tipo de gasto: disponible para admin, vendedor y jefe -->
+          <div class="tipo-gasto-toggle">
             <div class="toggle-label">
               <mat-icon>{{ form.get('esDeCaja')?.value ? 'point_of_sale' : 'account_balance' }}</mat-icon>
               <span>Tipo de gasto:</span>
@@ -190,6 +190,7 @@ export class GastoDialog implements OnInit {
   private usuarioService = inject(UsuarioService);
   private authService = inject(AuthService);
   dialogRef = inject(MatDialogRef<GastoDialog>);
+  private dialog = inject(MatDialog);
   data = inject(MAT_DIALOG_DATA);
 
 
@@ -205,7 +206,7 @@ export class GastoDialog implements OnInit {
     descripcion: ['', [Validators.required, Validators.maxLength(200)]],
     fechaHistorica: [null],
     usuarioId: [null],
-    esDeCaja: [true]  // Default: siempre sale de caja. Solo el admin puede cambiarlo.
+    esDeCaja: [true]  // Default: sale de caja. Admin, vendedor y jefe pueden cambiarlo.
   });
 
   isAdmin(): boolean {
@@ -263,7 +264,99 @@ export class GastoDialog implements OnInit {
       } else {
         delete payload.fechaHistorica;
       }
-      this.dialogRef.close(payload);
+
+      const categoria = this.categorias.find(c => c.id === this.form.value.categoriaGastoId);
+      const subcategoria = this.subcategorias.find(s => s.id === this.form.value.subcategoriaGastoId);
+
+      const confirmacion = this.dialog.open(ConfirmarGastoDialog, {
+        width: '430px',
+        disableClose: true,
+        data: {
+          monto: this.form.value.monto,
+          descripcion: this.form.value.descripcion,
+          categoria: [categoria?.nombre, subcategoria?.nombre].filter(Boolean).join(' / '),
+          esDeCaja: !!this.form.value.esDeCaja
+        }
+      });
+
+      confirmacion.afterClosed().subscribe(confirmado => {
+        if (confirmado) {
+          this.dialogRef.close(payload);
+        }
+      });
     }
   }
+}
+
+@Component({
+  selector: 'app-confirmar-gasto-dialog',
+  standalone: true,
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule],
+  template: `
+    <div class="dialog-wrapper">
+      <div class="icon" [class.caja]="data.esDeCaja" [class.general]="!data.esDeCaja">
+        <mat-icon>{{ data.esDeCaja ? 'point_of_sale' : 'account_balance' }}</mat-icon>
+      </div>
+
+      <h2 class="titulo">¿Está seguro que desea registrar este gasto?</h2>
+
+      <div class="detalle">
+        <div class="fila">
+          <span>Monto</span>
+          <strong class="monto">{{ data.monto | currency:'COP' }}</strong>
+        </div>
+        <div class="fila">
+          <span>Descripción</span>
+          <strong>{{ data.descripcion }}</strong>
+        </div>
+        <div class="fila" *ngIf="data.categoria">
+          <span>Categoría</span>
+          <strong>{{ data.categoria }}</strong>
+        </div>
+      </div>
+
+      <div class="aviso" [class.caja]="data.esDeCaja" [class.general]="!data.esDeCaja">
+        <mat-icon>{{ data.esDeCaja ? 'payments' : 'info' }}</mat-icon>
+        <span *ngIf="data.esDeCaja">
+          <strong>Este gasto SALE DE LA CAJA.</strong>
+          El dinero se descuenta del efectivo al cerrar caja.
+        </span>
+        <span *ngIf="!data.esDeCaja">
+          <strong>Este gasto NO saldrá de la caja.</strong>
+          Es un gasto general y no afecta el efectivo.
+        </span>
+      </div>
+
+      <div class="acciones">
+        <button mat-button class="btn-corregir" (click)="dialogRef.close(false)">Corregir</button>
+        <button mat-flat-button color="warn" class="btn-ok" (click)="dialogRef.close(true)">
+          Sí, registrar gasto
+        </button>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .dialog-wrapper { padding: 24px 20px 16px; text-align: center; }
+    .icon { display: flex; justify-content: center; align-items: center; width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 12px; }
+    .icon mat-icon { font-size: 32px; width: 32px; height: 32px; }
+    .icon.caja { background: #e8f5e9; color: #2e7d32; }
+    .icon.general { background: #e3f2fd; color: #1565c0; }
+    .titulo { font-size: 1.2rem; font-weight: 800; color: #333; margin: 0 0 16px; }
+    .detalle { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 12px 16px; text-align: left; margin-bottom: 14px; }
+    .fila { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; font-size: 0.95rem; }
+    .fila span { color: #666; }
+    .fila strong { color: #333; text-align: right; }
+    .fila .monto { font-size: 1.3rem; color: #d32f2f; }
+    .aviso { display: flex; align-items: flex-start; gap: 8px; text-align: left; border-radius: 10px; padding: 10px 14px; font-size: 0.9rem; line-height: 1.4; margin-bottom: 18px; }
+    .aviso mat-icon { font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+    .aviso.caja { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+    .aviso.general { background: #e3f2fd; border: 1px solid #90caf9; color: #0d47a1; }
+    .acciones { display: flex; flex-direction: column; gap: 8px; }
+    .btn-corregir { color: #666; }
+    .btn-ok { padding: 6px 16px; border-radius: 8px; font-weight: 700; }
+  `]
+})
+export class ConfirmarGastoDialog {
+  dialogRef = inject(MatDialogRef<ConfirmarGastoDialog>);
+  data = inject(MAT_DIALOG_DATA);
 }
