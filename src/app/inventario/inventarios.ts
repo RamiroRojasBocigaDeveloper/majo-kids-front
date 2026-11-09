@@ -4,7 +4,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,6 +14,7 @@ import { ProductoService, Producto } from '../productos/producto';
 import { CategoriaService, Categoria } from '../categorias/categoria';
 import { MovimientoInventarioService } from './inventario';
 import { InventarioDialog } from './inventario-dialog/inventario-dialog';
+import { colorDonutPorIndice, textoSobre } from '../shared/categoria-color';
 import { ProductoDialog } from '../productos/producto-dialog/producto-dialog';
 import { ImagePreviewDialog } from '../shared/image-preview-dialog';
 import { ToastService } from '../shared/toast.service';
@@ -31,7 +31,6 @@ import { AuthService } from '../auth/auth';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule,
     MatDialogModule,
     MatSelectModule,
     MatFormFieldModule,
@@ -97,9 +96,9 @@ import { AuthService } from '../auth/auth';
           <ng-container matColumnDef="categoria">
             <th mat-header-cell *matHeaderCellDef class="text-center"> Categoría </th>
             <td mat-cell *matCellDef="let p" class="text-center"> 
-              <mat-chip-set>
-                <mat-chip [class]="getCategoriaClass(p.categoriaNombre)">{{p.categoriaNombre || 'Sin Categoría'}}</mat-chip>
-              </mat-chip-set>
+              <span class="category-pill"
+                    [style.background-color]="bgCat(p.categoriaNombre)"
+                    [style.color]="fgCat(p.categoriaNombre)">{{p.categoriaNombre || 'Sin Categoría'}}</span>
             </td>
           </ng-container>
 
@@ -203,29 +202,37 @@ import { AuthService } from '../auth/auth';
       border-radius: 4px;
     }
     .status-out-of-stock {
+      display: inline-block;
       background: #fff3e0;
-      color: #ef6c00;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      border: 1px solid #ffe0b2;
+      color: #b45309;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      white-space: nowrap;
     }
     .status-active {
+      display: inline-block;
       background: #e8f5e9;
       color: #2e7d32;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      white-space: nowrap;
     }
     .status-inactive {
-      background: #fafafa;
-      color: #9e9e9e;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
+      display: inline-block;
+      background: #f1f1f1;
+      color: #757575;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      white-space: nowrap;
     }
     .loading-state {
       padding: 40px;
@@ -240,7 +247,6 @@ import { AuthService } from '../auth/auth';
       font-size: 15px !important;
     }
     .text-center { text-align: center !important; }
-    ::ng-deep .mat-mdc-chip-set { justify-content: center; }
     code {
       background: #f5f5f5;
       padding: 2px 6px;
@@ -251,10 +257,6 @@ import { AuthService } from '../auth/auth';
     .thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; cursor: pointer; transition: transform 0.2s; border: 1px solid #eee; }
     .thumb:hover { transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
     .thumb-placeholder { width: 40px; height: 40px; font-size: 40px; color: #ccc; }
-    .cat-nina { background-color: #ec407a !important; color: #ffffff !important; font-weight: 800 !important; border: 1px solid #d81b60; }
-    .cat-mujer { background-color: #7b1fa2 !important; color: #ffffff !important; font-weight: 700 !important; }
-    .cat-nino { background-color: #03a9f4 !important; color: #ffffff !important; font-weight: 700 !important; }
-    .cat-hombre { background-color: #0d47a1 !important; color: #ffffff !important; font-weight: 700 !important; }
     .ref-text { 
       color: var(--primary-pink);
       font-weight: 700;
@@ -302,14 +304,15 @@ export class Inventarios implements OnInit {
     this.terminoBusqueda.set(value);
   }
 
-  getCategoriaClass(nombre: string | undefined): string {
-    if (!nombre) return '';
-    const n = nombre.toLowerCase();
-    if (n.includes('niña')) return 'cat-nina';
-    if (n.includes('mujer')) return 'cat-mujer';
-    if (n.includes('niño')) return 'cat-nino';
-    if (n.includes('hombre')) return 'cat-hombre';
-    return '';
+  bgCat(nombre: string | undefined): string {
+    if (!nombre) return '#e5e5e5';
+    const i = this.categorias().findIndex(c => c.nombre === nombre);
+    return colorDonutPorIndice(i < 0 ? 0 : i);
+  }
+
+  fgCat(nombre: string | undefined): string {
+    if (!nombre) return '#555555';
+    return textoSobre(this.bgCat(nombre));
   }
 
   getCantidadPorCategoria(catId: number | undefined): number {

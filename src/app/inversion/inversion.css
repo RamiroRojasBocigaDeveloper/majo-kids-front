@@ -17,7 +17,7 @@
   margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border-color);
 }
 .inversion-page .mode-chip {
-  display: inline-flex; align-items: center; gap: 6px; background: #fce4ec; color: #ad1457;
+  display: inline-flex; align-items: center; gap: 6px; background: #fbf4f3; color: var(--deep-rose);
   font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px;
 }
 .inversion-page .mode-chip mat-icon { font-size: 15px; width: 15px; height: 15px; }
@@ -31,7 +31,7 @@
   box-shadow: var(--luxury-shadow); position: relative; overflow: hidden;
 }
 .inversion-page .kpi-card::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; border-radius: 4px; background: var(--accent); }
-.inversion-page .accent-pink { --accent: linear-gradient(180deg,#d81b60,#f06292); --icon-bg:#fce4ec; --icon-color:#d81b60; }
+.inversion-page .accent-pink { --accent: linear-gradient(180deg,var(--primary-pink),#c97b7b); --icon-bg:#fbf4f3; --icon-color:var(--primary-pink); }
 .inversion-page .accent-amber { --accent: linear-gradient(180deg,#ef6c00,#ffa726); --icon-bg:#fff3e0; --icon-color:#ef6c00; }
 .inversion-page .accent-red { --accent: linear-gradient(180deg,#c62828,#ef5350); --icon-bg:#ffebee; --icon-color:#c62828; }
 .inversion-page .accent-green { --accent: linear-gradient(180deg,#2e7d32,#66bb6a); --icon-bg:#e8f5e9; --icon-color:#2e7d32; }
@@ -61,7 +61,7 @@
 }
 .inversion-page .section-icon.small { width: 40px; height: 40px; border-radius: 12px; }
 .inversion-page .section-icon.small mat-icon { font-size: 20px; width: 20px; height: 20px; }
-.inversion-page .section-icon.small.pink { background: linear-gradient(135deg,#d81b60,#f06292); }
+.inversion-page .section-icon.small.pink { background: linear-gradient(135deg,var(--primary-pink),#c97b7b); }
 .inversion-page .section-icon.small.red { background: linear-gradient(135deg,#c62828,#ef5350); }
 .inversion-page .section-titles .eyebrow {
   display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px;
@@ -100,7 +100,7 @@
   cursor: pointer; text-align: left; border-radius: 12px; color: inherit; font: inherit;
   transition: background 0.18s ease;
 }
-.inversion-page .toggle-head:hover { background: #fdf2f8; }
+.inversion-page .toggle-head:hover { background: var(--header-bg); }
 .inversion-page .toggle-head:focus-visible { outline: 2px solid var(--primary-pink); outline-offset: 2px; }
 .inversion-page .toggle-head .section-head { margin-bottom: 0; }
 .inversion-page .action-chip {

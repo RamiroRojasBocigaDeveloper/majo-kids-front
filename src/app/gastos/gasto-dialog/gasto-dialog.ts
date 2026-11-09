@@ -114,21 +114,21 @@ import { provideNativeDateAdapter } from '@angular/material/core';
     ::ng-deep .mat-datepicker-toggle,
     ::ng-deep mat-datepicker-toggle button,
     ::ng-deep mat-datepicker-toggle mat-icon,
-    ::ng-deep .mat-datepicker-toggle-default-icon { color: #C2185B !important; }
+    ::ng-deep .mat-datepicker-toggle-default-icon { color: var(--primary-pink) !important; }
     
     ::ng-deep .pink-datepicker { z-index: 10000 !important; background: #ffffff !important; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.2) !important; }
     ::ng-deep .pink-datepicker .mat-calendar-body-cell-content { color: #333333 !important; font-weight: 500; }
-    ::ng-deep .pink-datepicker .mat-calendar-table-header { color: #C2185B !important; font-weight: bold; }
-    ::ng-deep .pink-datepicker .mat-calendar-body-selected { background-color: #e91e63 !important; color: white !important; font-weight: bold; }
-    ::ng-deep .pink-datepicker .mat-calendar-body-today:not(.mat-calendar-body-selected) { border-color: #e91e63 !important; }
-    ::ng-deep .pink-datepicker .mat-calendar-header { color: #C2185B !important; }
+    ::ng-deep .pink-datepicker .mat-calendar-table-header { color: var(--primary-pink) !important; font-weight: bold; }
+    ::ng-deep .pink-datepicker .mat-calendar-body-selected { background-color: var(--primary-pink) !important; color: white !important; font-weight: bold; }
+    ::ng-deep .pink-datepicker .mat-calendar-body-today:not(.mat-calendar-body-selected) { border-color: var(--primary-pink) !important; }
+    ::ng-deep .pink-datepicker .mat-calendar-header { color: var(--primary-pink) !important; }
     ::ng-deep .pink-datepicker .mat-calendar-period-button span, 
-    ::ng-deep .pink-datepicker .mat-calendar-period-button { color: #C2185B !important; font-weight: 800; }
-    ::ng-deep .pink-datepicker .mat-calendar-body-label { color: #C2185B !important; font-weight: 700; }
+    ::ng-deep .pink-datepicker .mat-calendar-period-button { color: var(--primary-pink) !important; font-weight: 800; }
+    ::ng-deep .pink-datepicker .mat-calendar-body-label { color: var(--primary-pink) !important; font-weight: 700; }
     ::ng-deep .pink-datepicker .mat-calendar-controls { margin-top: 5px; }
-    ::ng-deep .pink-datepicker .mat-calendar-arrow { fill: #C2185B !important; }
-    ::ng-deep .pink-datepicker .mat-icon-button { color: #C2185B !important; }
-    ::ng-deep .pink-datepicker .mat-calendar-previous-button, ::ng-deep .pink-datepicker .mat-calendar-next-button { color: #C2185B !important; }
+    ::ng-deep .pink-datepicker .mat-calendar-arrow { fill: var(--primary-pink) !important; }
+    ::ng-deep .pink-datepicker .mat-icon-button { color: var(--primary-pink) !important; }
+    ::ng-deep .pink-datepicker .mat-calendar-previous-button, ::ng-deep .pink-datepicker .mat-calendar-next-button { color: var(--primary-pink) !important; }
 
     mat-dialog-content { max-height: 65vh; overflow-y: auto; }
     
@@ -145,7 +145,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
       border-radius: 12px !important;
       font-weight: 800 !important;
       font-size: 16px !important;
-      background-color: #e91e63 !important;
+      background-color: var(--primary-pink) !important;
       color: white !important;
       letter-spacing: 1px;
     }
@@ -349,8 +349,8 @@ export class GastoDialog implements OnInit {
     .fila .monto { font-size: 1.3rem; color: #d32f2f; }
     .aviso { display: flex; align-items: flex-start; gap: 8px; text-align: left; border-radius: 10px; padding: 10px 14px; font-size: 0.9rem; line-height: 1.4; margin-bottom: 18px; }
     .aviso mat-icon { font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
-    .aviso.caja { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
-    .aviso.general { background: #e3f2fd; border: 1px solid #90caf9; color: #0d47a1; }
+    .aviso.caja { background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; }
+    .aviso.general { background: #e3f2fd; border: 1px solid #90caf9; color: #1565c0; }
     .acciones { display: flex; flex-direction: column; gap: 8px; }
     .btn-corregir { color: #666; }
     .btn-ok { padding: 6px 16px; border-radius: 8px; font-weight: 700; }

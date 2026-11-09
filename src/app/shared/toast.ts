@@ -86,7 +86,7 @@ const TYPE_META: Record<ToastType, { icon: string; label: string }> = {
       position: absolute;
       inset: 0 auto 0 0;
       width: 60px;
-      background: radial-gradient(circle at top left, rgba(255, 45, 129, 0.12), transparent 70%);
+      background: radial-gradient(circle at top left, rgba(181, 101, 107, 0.14), transparent 70%);
       pointer-events: none;
     }
 
@@ -154,18 +154,18 @@ const TYPE_META: Record<ToastType, { icon: string; label: string }> = {
       --primary: #ef6c00;
     }
     .toast-info {
-      --primary: #6a1b9a;
+      --primary: #a97b1f;
     }
 
     .toast-success .toast-bar { background: linear-gradient(180deg, #2e7d32, #66bb6a); }
     .toast-error .toast-bar { background: linear-gradient(180deg, #d32f2f, #e57373); }
     .toast-warning .toast-bar { background: linear-gradient(180deg, #ef6c00, #ffb74d); }
-    .toast-info .toast-bar { background: linear-gradient(180deg, #6a1b9a, #ab47bc); }
+    .toast-info .toast-bar { background: linear-gradient(180deg, #a97b1f, #c8a24a); }
 
     .toast-success .toast-icon { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
     .toast-error .toast-icon { background: linear-gradient(135deg, #ffebee, #ffcdd2); }
     .toast-warning .toast-icon { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
-    .toast-info .toast-icon { background: linear-gradient(135deg, #f3e5f5, #e1bee7); }
+    .toast-info .toast-icon { background: linear-gradient(135deg, #f7efd8, #f0e3b8); }
   `]
 })
 export class ToastHost {

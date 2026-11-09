@@ -446,7 +446,7 @@ export class VentaHistorialDialog implements OnInit {
       font-weight: 800;
       font-size: 20px;
       border-radius: 18px;
-      box-shadow: 0 4px 15px rgba(216, 27, 96, 0.3);
+      box-shadow: 0 4px 15px rgba(181, 101, 107, 0.3);
       letter-spacing: 1px;
       text-transform: uppercase;
     }
@@ -469,17 +469,17 @@ export class VentaHistorialDialog implements OnInit {
 
     ::ng-deep .pink-datepicker { background: #ffffff !important; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.2) !important; }
     ::ng-deep .pink-datepicker .mat-calendar-body-cell-content { color: #333333 !important; font-weight: 500; }
-    ::ng-deep .pink-datepicker .mat-calendar-table-header { color: #C2185B !important; font-weight: bold; }
-    ::ng-deep .pink-datepicker .mat-calendar-body-selected { background-color: #e91e63 !important; color: white !important; font-weight: bold; }
-    ::ng-deep .pink-datepicker .mat-calendar-body-today:not(.mat-calendar-body-selected) { border-color: #e91e63 !important; }
-    ::ng-deep .pink-datepicker .mat-calendar-header { color: #C2185B !important; }
+    ::ng-deep .pink-datepicker .mat-calendar-table-header { color: var(--primary-pink) !important; font-weight: bold; }
+    ::ng-deep .pink-datepicker .mat-calendar-body-selected { background-color: var(--primary-pink) !important; color: white !important; font-weight: bold; }
+    ::ng-deep .pink-datepicker .mat-calendar-body-today:not(.mat-calendar-body-selected) { border-color: var(--primary-pink) !important; }
+    ::ng-deep .pink-datepicker .mat-calendar-header { color: var(--primary-pink) !important; }
     ::ng-deep .pink-datepicker .mat-calendar-period-button span, 
-    ::ng-deep .pink-datepicker .mat-calendar-period-button { color: #C2185B !important; font-weight: 800; }
-    ::ng-deep .pink-datepicker .mat-calendar-body-label { color: #C2185B !important; font-weight: 700; }
+    ::ng-deep .pink-datepicker .mat-calendar-period-button { color: var(--primary-pink) !important; font-weight: 800; }
+    ::ng-deep .pink-datepicker .mat-calendar-body-label { color: var(--primary-pink) !important; font-weight: 700; }
     ::ng-deep .pink-datepicker .mat-calendar-controls { margin-top: 5px; }
-    ::ng-deep .pink-datepicker .mat-calendar-arrow { fill: #C2185B !important; }
-    ::ng-deep .pink-datepicker .mat-icon-button { color: #C2185B !important; }
-    ::ng-deep .pink-datepicker .mat-calendar-previous-button, ::ng-deep .pink-datepicker .mat-calendar-next-button { color: #C2185B !important; }
+    ::ng-deep .pink-datepicker .mat-calendar-arrow { fill: var(--primary-pink) !important; }
+    ::ng-deep .pink-datepicker .mat-icon-button { color: var(--primary-pink) !important; }
+    ::ng-deep .pink-datepicker .mat-calendar-previous-button, ::ng-deep .pink-datepicker .mat-calendar-next-button { color: var(--primary-pink) !important; }
 
     
     .search-bar { display: flex; align-items: baseline; }
@@ -492,7 +492,7 @@ export class VentaHistorialDialog implements OnInit {
     .empty-cart mat-icon { font-size: 64px; width: 64px; height: 64px; }
     
     ::ng-deep table.mat-mdc-table { background: transparent !important; }
-    ::ng-deep table.mat-mdc-table thead tr { background-color: #fff5f8 !important; }
+    ::ng-deep table.mat-mdc-table thead tr { background-color: #fdf9f7 !important; }
     ::ng-deep th.mat-mdc-header-cell {
       color: var(--primary-pink) !important; font-weight: 700 !important;
       text-transform: uppercase; font-size: 12px; letter-spacing: 1px;
@@ -604,10 +604,10 @@ export class VentaHistorialDialog implements OnInit {
       font-weight: 700;
       font-size: 15px;
       color: var(--primary-pink) !important;
-      border-color: #f3c1d4 !important;
+      border-color: #e9c6bf !important;
     }
     .quick-amount-btn.selected {
-      background: #fce4ec !important;
+      background: #fbf4f3 !important;
       border-color: var(--primary-pink) !important;
     }
     .change-box {

@@ -44,15 +44,7 @@
     margin-top: 20px;
 }
 
-.category-pill {
-    background-color: var(--light-pink);
-    color: #ad1457;
-    padding: 6px 14px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 13px;
-    display: inline-block;
-}
+/* .category-pill: estilos globales en src/styles.scss (compartidos con Inventario) */
 
 .loading-shade {
     display: flex;
@@ -73,11 +65,11 @@
 }
 
 tr.mat-mdc-header-row {
-    background-color: #fdf2f8;
+    background-color: var(--header-bg);
 }
 
 th.mat-mdc-header-cell {
-    color: #ad1457 !important;
+    color: var(--deep-rose) !important;
     font-weight: 700 !important;
 }
 

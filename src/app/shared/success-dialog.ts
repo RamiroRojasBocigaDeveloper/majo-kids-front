@@ -31,7 +31,7 @@ import { MatIconModule } from '@angular/material/icon';
       padding: 36px 34px 30px;
       text-align: center;
       border-radius: 24px;
-      background: linear-gradient(150deg, #ffffff 0%, #fff7fa 100%);
+      background: linear-gradient(150deg, #ffffff 0%, #fdf9f7 100%);
       overflow: hidden;
       animation: realm-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
@@ -42,7 +42,7 @@ import { MatIconModule } from '@angular/material/icon';
       width: 260px;
       height: 200px;
       transform: translateX(-50%);
-      background: radial-gradient(circle, rgba(216, 27, 96, 0.16) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(181, 101, 107, 0.16) 0%, transparent 70%);
       pointer-events: none;
     }
     .realm-icon {
@@ -55,8 +55,8 @@ import { MatIconModule } from '@angular/material/icon';
       font-size: 3.4rem;
       line-height: 1;
       border-radius: 26px;
-      background: linear-gradient(145deg, #fff, #ffe3ee);
-      box-shadow: 0 12px 30px rgba(216, 27, 96, 0.22), inset 0 1px 0 rgba(255,255,255,0.9);
+      background: linear-gradient(145deg, #fff, #f9eae8);
+      box-shadow: 0 12px 30px rgba(181, 101, 107, 0.22), inset 0 1px 0 rgba(255,255,255,0.9);
       animation: icon-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .realm-title {
@@ -83,10 +83,10 @@ import { MatIconModule } from '@angular/material/icon';
       border-radius: 14px;
       background: var(--vibrant-gradient) !important;
       color: #fff !important;
-      box-shadow: 0 10px 26px rgba(216, 27, 96, 0.35);
+      box-shadow: 0 10px 26px rgba(181, 101, 107, 0.35);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .realm-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(216, 27, 96, 0.45); }
+    .realm-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(181, 101, 107, 0.45); }
     .realm-btn mat-icon { margin-right: 6px; }
     .realm-cancel { color: #999; letter-spacing: 0.3px; width: 100%; }
 

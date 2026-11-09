@@ -121,7 +121,7 @@ import { MatIconModule } from '@angular/material/icon';
   styles: [`
     .form-grid { display: flex; flex-direction: column; gap: 4px; padding-top: 10px; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .image-upload-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; align-items: center; background: rgba(216, 27, 96, 0.03); padding: 16px; border-radius: 16px; border: 1px dashed var(--primary-pink); }
+    .image-upload-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; align-items: center; background: rgba(181, 101, 107, 0.05); padding: 16px; border-radius: 16px; border: 1px dashed var(--primary-pink); }
     .image-preview { width: 100%; display: flex; justify-content: center; }
     .preview-img { max-width: 150px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid white; object-fit: cover; }
     .upload-buttons { display: flex; gap: 8px; width: 100%; }

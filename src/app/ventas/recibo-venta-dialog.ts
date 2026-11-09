@@ -99,7 +99,7 @@ export interface ReciboVentaData {
       align-items: center;
       gap: 16px;
       padding: 20px 16px 16px;
-      background: #fffafc;
+      background: var(--bg-main);
     }
 
     .ticket {
@@ -109,8 +109,8 @@ export interface ReciboVentaData {
       font-family: 'Roboto', Arial, sans-serif;
       padding: 22px 20px 18px;
       border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(216, 27, 96, 0.15);
-      border: 1px dashed #f3c6d8;
+      box-shadow: 0 8px 24px rgba(181, 101, 107, 0.15);
+      border: 1px dashed #f0d8d5;
     }
 
     .ticket-header {
@@ -121,7 +121,7 @@ export interface ReciboVentaData {
     .logo {
       font-size: 1.7rem;
       font-weight: 800;
-      color: #d81b60;
+      color: var(--primary-pink);
       letter-spacing: -0.5px;
     }
 
@@ -130,7 +130,7 @@ export interface ReciboVentaData {
       font-size: 0.72rem;
       font-weight: 600;
       letter-spacing: 2px;
-      color: #ad1457;
+      color: var(--deep-rose);
     }
 
     .meta {
@@ -151,7 +151,7 @@ export interface ReciboVentaData {
     .meta-row strong { color: #1a1a1a; font-weight: 700; word-break: break-all; text-align: right; }
 
     .divider {
-      border-top: 1px dashed #e0a8c0;
+      border-top: 1px dashed #e2b0ae;
       margin: 12px 0;
     }
 
@@ -166,9 +166,9 @@ export interface ReciboVentaData {
       font-size: 0.68rem;
       font-weight: 700;
       letter-spacing: 1px;
-      color: #ad1457;
+      color: var(--deep-rose);
       padding-bottom: 6px;
-      border-bottom: 1px solid #f3dbe7;
+      border-bottom: 1px solid #f5e4e2;
     }
 
     .items tbody td {
@@ -201,10 +201,10 @@ export interface ReciboVentaData {
     .total-row.grand {
       margin-top: 4px;
       padding-top: 7px;
-      border-top: 2px solid #d81b60;
+      border-top: 2px solid var(--primary-pink);
       font-size: 1.15rem;
       font-weight: 800;
-      color: #d81b60;
+      color: var(--primary-pink);
     }
 
     .footer {
@@ -213,7 +213,7 @@ export interface ReciboVentaData {
     }
 
     .gracias { font-size: 0.85rem; font-weight: 600; color: #333; }
-    .marca { font-size: 0.72rem; color: #ad1457; font-weight: 700; margin-top: 2px; letter-spacing: 1px; }
+    .marca { font-size: 0.72rem; color: var(--deep-rose); font-weight: 700; margin-top: 2px; letter-spacing: 1px; }
 
     .actions {
       display: flex;
@@ -224,11 +224,11 @@ export interface ReciboVentaData {
 
     .actions button { width: 100%; font-weight: 700; }
     .btn-pdf {
-      background: #d81b60 !important;
+      background: var(--primary-pink) !important;
       color: #fff !important;
-      box-shadow: 0 6px 16px rgba(216, 27, 96, 0.3);
+      box-shadow: 0 6px 16px rgba(181, 101, 107, 0.3);
     }
-    .btn-img { border-color: #d81b60; color: #d81b60; }
+    .btn-img { border-color: var(--primary-pink); color: var(--primary-pink); }
     .btn-close { color: #777; }
 
     .generando {
@@ -236,7 +236,7 @@ export interface ReciboVentaData {
       align-items: center;
       gap: 8px;
       font-size: 0.85rem;
-      color: #ad1457;
+      color: var(--deep-rose);
       font-weight: 600;
     }
     .generando mat-icon { font-size: 18px; width: 18px; height: 18px; }

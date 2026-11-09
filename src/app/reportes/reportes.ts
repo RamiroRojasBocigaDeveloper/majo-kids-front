@@ -3,6 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
+import { DONUT_PALETTE as PALETA_DONUT } from '../shared/categoria-color';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -487,29 +488,18 @@ export class Reportes implements OnInit, OnDestroy {
   private metodoInfo(nombre: string): { icon: string; color: string; bg: string } {
     const n = nombre.toLowerCase();
     if (n.includes('efectivo')) return { icon: 'payments', color: '#2e7d32', bg: '#e8f5e9' };
-    if (n.includes('nequi')) return { icon: 'smartphone', color: '#6a1b9a', bg: '#f3e5f5' };
+    if (n.includes('nequi')) return { icon: 'smartphone', color: '#a97b1f', bg: '#f7efd8' };
     if (n.includes('daviplata')) return { icon: 'smartphone', color: '#c62828', bg: '#ffebee' };
     if (n.includes('transfer') || n.includes('consign')) return { icon: 'account_balance', color: '#1565c0', bg: '#e3f2fd' };
     if (n.includes('tarjeta') || n.includes('credito') || n.includes('debito')) {
       return { icon: 'credit_card', color: '#ef6c00', bg: '#fff3e0' };
     }
-    return { icon: 'swap_horiz', color: '#d81b60', bg: '#fce4ec' };
+    return { icon: 'swap_horiz', color: '#a94f57', bg: '#fbf4f3' };
   }
 
   // Paleta cualitativa tipo Tableau: tonos bien separados en hue y luminosidad,
   // diseñada para distinguirse incluso en monitores de baja calidad.
-  private readonly DONUT_PALETTE = [
-    '#4e79a7', // azul
-    '#f28e2b', // naranja
-    '#59a14f', // verde
-    '#e15759', // rojo
-    '#76b7b2', // teal
-    '#edc948', // amarillo
-    '#b07aa1', // violeta
-    '#ff9da7', // rosa
-    '#9c755f', // marrón
-    '#7f7f7f'  // gris
-  ];
+  private readonly DONUT_PALETTE = PALETA_DONUT;
 
   private sortedEntries(map: { [key: string]: number }): [string, number][] {
     return Object.entries(map).sort((a, b) => b[1] - a[1]);

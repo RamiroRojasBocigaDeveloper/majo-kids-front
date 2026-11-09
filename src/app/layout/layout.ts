@@ -71,9 +71,9 @@ import { ToastService } from '../shared/toast.service';
     .opt-danger { background: #fff3f3; border-color: #ef9a9a; color: #c62828; }
     .opt-danger:hover { background: #ffebee; border-color: #c62828; transform: translateY(-1px); }
     .opt-danger mat-icon { color: #c62828; }
-    .opt-neutral { background: #f3f6ff; border-color: #90a4e8; color: #283593; }
-    .opt-neutral:hover { background: #e8eaf6; border-color: #283593; transform: translateY(-1px); }
-    .opt-neutral mat-icon { color: #3949ab; }
+    .opt-neutral { background: #fdf8f1; border-color: #e9c6bf; color: #8c4a50; }
+    .opt-neutral:hover { background: #f5e4e2; border-color: #a94f57; transform: translateY(-1px); }
+    .opt-neutral mat-icon { color: #a94f57; }
     .opt-cancel { background: #f9f9f9; border-color: #e0e0e0; color: #555; }
     .opt-cancel:hover { background: #f0f0f0; border-color: #aaa; transform: translateY(-1px); }
     .opt-cancel mat-icon { color: #777; }
@@ -216,7 +216,7 @@ export class ConfirmLogoutDialog {
       background-color: var(--primary-pink) !important;
       color: white !important;
       font-weight: 700 !important;
-      box-shadow: 0 4px 15px rgba(216, 27, 96, 0.2);
+      box-shadow: 0 4px 15px rgba(181, 101, 107, 0.2);
     }
     .active-link mat-icon {
       color: white !important;
@@ -224,7 +224,7 @@ export class ConfirmLogoutDialog {
     mat-toolbar {
       background: var(--vibrant-gradient) !important;
       color: white !important;
-      box-shadow: 0 4px 20px rgba(216, 27, 96, 0.15);
+      box-shadow: 0 4px 20px rgba(181, 101, 107, 0.15);
     }
     mat-nav-list a {
       margin: 8px 16px;
@@ -244,7 +244,7 @@ export class ConfirmLogoutDialog {
       color: white !important;
     }
     mat-nav-list a:hover {
-      background-color: rgba(216, 27, 96, 0.05);
+      background-color: rgba(181, 101, 107, 0.05);
       color: var(--primary-pink) !important;
       transform: translateX(5px);
     }

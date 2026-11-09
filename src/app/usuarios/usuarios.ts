@@ -172,10 +172,10 @@ export class ResetPasswordDialog {
     .action-buttons-group { display: flex; gap: 4px; justify-content: center; }
     
     /* Roles Styles */
-    .rol-admin { background-color: #d81b60 !important; color: #ffffff !important; font-weight: 700 !important; }
-    .rol-vendedor { background-color: #1976d2 !important; color: #ffffff !important; font-weight: 700 !important; }
-    .rol-jefe { background-color: #7b1fa2 !important; color: #ffffff !important; font-weight: 700 !important; }
-    .rol-default { background-color: #757575 !important; color: #ffffff !important; font-weight: 700 !important; }
+    .rol-admin { background-color: #f8e8e6 !important; color: #a94f57 !important; font-weight: 700 !important; border: 1px solid rgba(169, 79, 87, 0.25) !important; }
+    .rol-vendedor { background-color: #e8f1f6 !important; color: #3f6f8c !important; font-weight: 700 !important; border: 1px solid rgba(63, 111, 140, 0.25) !important; }
+    .rol-jefe { background-color: #f1e8f0 !important; color: #7a4a63 !important; font-weight: 700 !important; border: 1px solid rgba(122, 74, 99, 0.25) !important; }
+    .rol-default { background-color: #f1f1f1 !important; color: #757575 !important; font-weight: 700 !important; border: 1px solid rgba(117, 117, 117, 0.25) !important; }
   `]
 })
 export class Usuarios implements OnInit {

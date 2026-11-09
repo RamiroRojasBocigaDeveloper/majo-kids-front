@@ -1,26 +1,136 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
-@import "@angular/material/prebuilt-themes/pink-bluegrey.css";
-@import "./app/reportes/reportes.css";
+@use '@angular/material' as mat;
+
+/* ============================================================
+   TEMA MajoKids — paleta unificada con el login
+   (terracota / rosa antiguo + dorado sobre crema)
+   ============================================================ */
+
+/* ── Principal: rosa antiguo / terracota ── */
+$majokids-primary: (
+  50: #fdf7f5,
+  100: #f8e8e6,
+  200: #f0d8d5,
+  300: #e2b0ae,
+  400: #cf8b89,
+  500: #b96067,
+  600: #a94f57,
+  700: #8f4d52,
+  800: #7c4248,
+  900: #6a383d,
+  contrast: (
+    50: #4a2b2e,
+    100: #4a2b2e,
+    200: #4a2b2e,
+    300: #4a2b2e,
+    400: #4a2b2e,
+    500: #fff8f0,
+    600: #fff8f0,
+    700: #fff8f0,
+    800: #fff8f0,
+    900: #fff8f0,
+  ),
+);
+
+/* ── Acento: dorado ── */
+$majokids-accent: (
+  50: #fdf9ef,
+  100: #f8f0d8,
+  200: #f0e3b8,
+  300: #e5d094,
+  400: #d7ba6b,
+  500: #c8a24a,
+  600: #b8903a,
+  700: #a97b1f,
+  800: #8d661b,
+  900: #735216,
+  contrast: (
+    50: #4a2b2e,
+    100: #4a2b2e,
+    200: #4a2b2e,
+    300: #4a2b2e,
+    400: #4a2b2e,
+    500: #4a2b2e,
+    600: #4a2b2e,
+    700: #4a2b2e,
+    800: #fff8f0,
+    900: #fff8f0,
+  ),
+);
+
+/* ── Advertencia / error: terracota roja ── */
+$majokids-warn: (
+  50: #fff6f4,
+  100: #fdeceb,
+  200: #f8d4d3,
+  300: #eec2c2,
+  400: #dd8b87,
+  500: #cd4f57,
+  600: #c23c45,
+  700: #b03a42,
+  800: #94323a,
+  900: #7a2b31,
+  contrast: (
+    50: #7a2b31,
+    100: #7a2b31,
+    200: #7a2b31,
+    300: #7a2b31,
+    400: #7a2b31,
+    500: #fff8f0,
+    600: #fff8f0,
+    700: #fff8f0,
+    800: #fff8f0,
+    900: #fff8f0,
+  ),
+);
+
+@include mat.core();
+
+$theme: mat.m2-define-light-theme((
+  color: (
+    primary: mat.m2-define-palette($majokids-primary, 600),
+    accent: mat.m2-define-palette($majokids-accent, 500),
+    warn: mat.m2-define-palette($majokids-warn, 500),
+  ),
+  typography: mat.m2-define-typography-config($font-family: 'Outfit, sans-serif'),
+  density: 0,
+));
+
+@include mat.all-component-themes($theme);
 
 :root {
-  --primary-pink: #d81b60; 
-  --premium-accent: #ff2d81;
-  --luxury-magenta: #6a1b9a;
-  --deep-rose: #ad1457;
-  --bg-main: #fffafc; /* Una pizca de rosa, muy profesional */
+  /* ── Marcas de la paleta (terracota + dorado) ── */
+  --primary-pink: #a94f57; /* nombre histórico; hoy es terracota */
+  --premium-accent: #c8a24a; /* dorado */
+  --luxury-magenta: #8c4a50;
+  --deep-rose: #8c4a50;
+  --gold: #c8a24a;
+  --gold-deep: #a97b1f;
+  --rose: #b5656b;
+  --rose-soft: #e9c6bf;
+  --secondary-pink: #c97b7b;
+
+  /* ── Superficies ── */
+  --bg-main: #fdf8f1;
   --bg-card: #ffffff;
-  --dark-text: #1a1a1a; /* Más oscuro para máximo contraste */
-  --subtle-text: #5f6368;
-  --placeholder-text: rgba(0, 0, 0, 0.4);
-  --border-color: rgba(216, 27, 96, 0.15);
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --luxury-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  
-  --vibrant-gradient: linear-gradient(135deg, #d81b60 0%, #ff2d81 100%);
-  --soft-gradient: linear-gradient(135deg, #fffafc 0%, #ffffff 100%);
-  --light-pink: rgba(216, 27, 96, 0.05);
-  --header-bg: #fdf2f8;
-  --pill-text: #ad1457;
+  --glass-bg: rgba(252, 245, 239, 0.85);
+  --header-bg: #fcf5ef;
+
+  /* ── Texto ── */
+  --dark-text: #4a2b2e;
+  --subtle-text: #9a7a7a;
+  --placeholder-text: rgba(74, 43, 46, 0.45);
+
+  /* ── Líneas y sombras ── */
+  --border-color: rgba(181, 101, 107, 0.18);
+  --luxury-shadow: 0 10px 30px rgba(120, 60, 66, 0.07);
+
+  /* ── Gradientes ── */
+  --vibrant-gradient: linear-gradient(135deg, #a94f57 0%, #c97b7b 100%);
+  --soft-gradient: linear-gradient(135deg, #fdf8f1 0%, #ffffff 100%);
+
+  /* ── Tintes ── */
+  --light-pink: rgba(181, 101, 107, 0.08);
+  --pill-text: #8c4a50;
   --secondary-brown: #8d6e63;
 }
 
@@ -34,8 +144,8 @@ html, body {
 
 /* REGLA GLOBAL PARA INPUTS: Forzar texto oscuro */
 input, textarea, select {
-  color: #5d4037 !important;
-  -webkit-text-fill-color: #5d4037 !important;
+  color: #4a2b2e !important;
+  -webkit-text-fill-color: #4a2b2e !important;
 }
 
 /* FIX CRÍTICO: Texto del valor seleccionado en mat-select (el que queda visible en el campo) */
@@ -44,14 +154,14 @@ input, textarea, select {
 .mat-mdc-select-trigger,
 .mat-mdc-select-min-line,
 span.mat-mdc-select-value-text span {
-  color: #5d4037 !important;
-  -webkit-text-fill-color: #5d4037 !important;
+  color: #4a2b2e !important;
+  -webkit-text-fill-color: #4a2b2e !important;
 }
 
 /* FIX: Placeholder del mat-select cuando no hay valor seleccionado */
 .mat-mdc-select-placeholder {
-  color: rgba(0, 0, 0, 0.4) !important;
-  -webkit-text-fill-color: rgba(0, 0, 0, 0.4) !important;
+  color: rgba(74, 43, 46, 0.45) !important;
+  -webkit-text-fill-color: rgba(74, 43, 46, 0.45) !important;
 }
 
 /* FIX: Flecha/icono del mat-select */
@@ -84,7 +194,7 @@ span.mat-mdc-select-value-text span {
 .mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
   border-color: var(--primary-pink) !important;
   border-width: 2px !important;
-  box-shadow: 0 0 0 4px rgba(216, 27, 96, 0.05) !important;
+  box-shadow: 0 0 0 4px rgba(169, 79, 87, 0.08) !important;
 }
 
 /* ELIMINAR LA LÍNEA VERTICAL QUE CRUZA EL ICONO: Ya no es necesaria por la unificación del wrapper */
@@ -187,7 +297,7 @@ h1 {
   border-bottom: 1px solid rgba(0,0,0,0.03) !important;
 }
 .mat-mdc-row:hover {
-  background-color: rgba(216, 27, 96, 0.02) !important;
+  background-color: rgba(181, 101, 107, 0.04) !important;
 }
 
 /* FIX: Contraste para Chips (Roles y Etiquetas) */
@@ -329,6 +439,20 @@ mat-card.total-card,
   background: var(--primary-pink);
 }
 
+/* Pill de categoría — misma apariencia en Inventario y Categorías.
+   El color de fondo/texto se inyecta desde el componente con la paleta de la dona
+   (shared/categoria-color.ts: colorDonutPorIndice + textoSobre). */
+.category-pill {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.2;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
 /* =========================================================
    RESPONSIVE DESIGN (SOLO CONSULTA / MOBILE FIXES)
    ========================================================= */
@@ -364,14 +488,14 @@ mat-card.total-card,
     margin: 0 !important;
   }
 
-  /* Reducir márgenes de tarjetas en móviles */
+  /* Reducir márgenes de tarjetas en móvil */
   .header-card, .luxury-card {
     margin: 10px !important;
     padding: 15px !important;
     border-radius: 12px !important;
   }
 
-  /* Reducir tamaño de fuente de cabeceras en móviles */
+  /* Reducir tamaño de fuente de cabeceras en móvil */
   h1 {
     font-size: 22px !important;
   }

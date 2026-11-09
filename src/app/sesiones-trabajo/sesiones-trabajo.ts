@@ -357,7 +357,7 @@ export class ResumenCierreDialog {
     .inactive { color: #f44336; }
     .vendedor-name { color: var(--primary-pink); font-weight: 800; font-size: 1.1rem; }
     .action-btn { width: 100%; margin-top: 20px; padding: 24px 0; border-radius: 12px; font-size: 1.1rem; font-weight: bold; }
-    .popup-btn { background: linear-gradient(135deg, var(--primary-pink), #e91e63); border: none; transition: transform 0.2s; }
+    .popup-btn { background: linear-gradient(135deg, var(--primary-pink), #c97b7b); border: none; transition: transform 0.2s; }
     .popup-btn:hover { transform: scale(1.02); }
     .full-width { width: 100%; }
     .badge { padding: 4px 8px; border-radius: 8px; background: #e0e0e0; font-weight: 600; font-size: 0.8rem; }
