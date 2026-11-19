@@ -1,10 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ReporteService, EstadisticasInversionResponse, InversionProducto } from '../reportes/reporte';
+import { CompraMercancia, CompraMercanciaService } from '../compras-mercancia/compra-mercancia';
 import { ToastService } from '../shared/toast.service';
 
 interface GastoSubcategoria {
@@ -16,21 +18,24 @@ interface GastoSubcategoria {
 @Component({
   selector: 'app-inversion',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatProgressBarModule],
+  imports: [CommonModule, RouterModule, MatCardModule, MatButtonModule, MatIconModule, MatProgressBarModule],
   templateUrl: './inversion.html',
   styleUrl: './inversion.css',
 })
 export class Inversion implements OnInit {
   private reporteService = inject(ReporteService);
+  private compraMercanciaService = inject(CompraMercanciaService);
   private toast = inject(ToastService);
 
   data = signal<EstadisticasInversionResponse | null>(null);
   loading = signal(false);
-  showCompras = signal(false);
+  compras = signal<CompraMercancia[]>([]);
+  showCompras = signal(true);
+  showEntradas = signal(true);
   showGastos = signal(false);
 
-  compras = computed<InversionProducto[]>(() =>
-    [...(this.data()?.comprasPorProducto ?? [])].sort((a, b) => b.monto - a.monto)
+  entradasIniciales = computed<InversionProducto[]>(() =>
+    [...(this.data()?.entradasInicialesPorProducto ?? [])].sort((a, b) => b.monto - a.monto)
   );
 
   gastos = computed<GastoSubcategoria[]>(() => {
@@ -56,6 +61,30 @@ export class Inversion implements OnInit {
       },
       error: (err) => this.manejarError(err),
     });
+
+    this.compraMercanciaService.listar().subscribe({
+      next: (res) => this.compras.set(res),
+      error: () => this.compras.set([]),
+    });
+  }
+
+  unidades(compra: CompraMercancia): number {
+    return (compra.lineas ?? []).reduce((sum, l) => sum + Number(l.cantidad || 0), 0);
+  }
+
+  productoPrincipal(compra: CompraMercancia): string {
+    if (compra.lineas && compra.lineas.length > 0) {
+      const p = compra.lineas[0];
+      const extra = compra.lineas.length > 1 ? ` (+${compra.lineas.length - 1} más)` : '';
+      return `${p.productoNombre || 'Producto'} (${p.referencia || 'S/R'})${extra}`;
+    }
+    return compra.descripcion || compra.proveedor || 'Compra de mercancía';
+  }
+
+  metodoLabel(metodo: string): string {
+    if (metodo === 'EFECTIVO') return 'Efectivo';
+    if (metodo === 'TRANSFERENCIA') return 'Transferencia';
+    return '—';
   }
 
   private manejarError(err: any) {

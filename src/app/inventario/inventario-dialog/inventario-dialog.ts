@@ -29,7 +29,6 @@ import { Producto } from '../../productos/producto';
           <mat-form-field appearance="outline">
             <mat-label>Tipo de Movimiento</mat-label>
             <mat-select formControlName="tipo">
-              <mat-option value="ENTRADA">Entrada (Compra/Suministro)</mat-option>
               <mat-option value="SALIDA">Salida (Merma/Retiro)</mat-option>
               <mat-option value="AJUSTE">Ajuste Manual</mat-option>
             </mat-select>
@@ -42,25 +41,8 @@ import { Producto } from '../../productos/producto';
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Motivo / Descripción</mat-label>
-            <textarea matInput formControlName="motivo" placeholder="Ej: Compra de lote 05/2026"></textarea>
+            <textarea matInput formControlName="motivo" placeholder="Ej: Merma por producto dañado"></textarea>
           </mat-form-field>
-
-          <ng-container *ngIf="form.get('tipo')?.value === 'ENTRADA'">
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-              <mat-form-field appearance="outline">
-                <mat-label>Precio costo</mat-label>
-                <input matInput type="number" formControlName="nuevoPrecioCompra">
-              </mat-form-field>
-              
-              <mat-form-field appearance="outline">
-                <mat-label>Nuevo Precio Venta</mat-label>
-                <input matInput type="number" formControlName="nuevoPrecioVenta">
-              </mat-form-field>
-            </div>
-            <small style="color: gray; margin-bottom: 10px;">
-              El costo es obligatorio para entradas: se usa para calcular la inversión en mercancía.
-            </small>
-          </ng-container>
         </div>
       </form>
     </mat-dialog-content>
@@ -85,27 +67,10 @@ export class InventarioDialog {
   data = inject(MAT_DIALOG_DATA);
 
   form: FormGroup = this.fb.group({
-    tipo: ['ENTRADA', Validators.required],
+    tipo: ['SALIDA', Validators.required],
     cantidad: [null, [Validators.required, Validators.min(1)]],
-    motivo: ['', [Validators.required, Validators.maxLength(100)]],
-    nuevoPrecioCompra: [null],
-    nuevoPrecioVenta: [null]
+    motivo: ['', [Validators.required, Validators.maxLength(100)]]
   });
-
-  constructor() {
-    this.form.get('tipo')!.valueChanges.subscribe((tipo) => this.aplicarValidadoresCosto(tipo));
-    this.aplicarValidadoresCosto(this.form.get('tipo')!.value);
-  }
-
-  private aplicarValidadoresCosto(tipo: string) {
-    const costo = this.form.get('nuevoPrecioCompra')!;
-    if (tipo === 'ENTRADA') {
-      costo.setValidators([Validators.required, Validators.min(0)]);
-    } else {
-      costo.clearValidators();
-    }
-    costo.updateValueAndValidity();
-  }
 
   onCancel() {
     this.dialogRef.close();
@@ -113,17 +78,10 @@ export class InventarioDialog {
 
   onSave() {
     if (this.form.valid) {
-      const payload: any = {
+      this.dialogRef.close({
         ...this.form.value,
         productoId: this.data.producto.id
-      };
-      
-      if (payload.tipo !== 'ENTRADA') {
-        delete payload.nuevoPrecioCompra;
-        delete payload.nuevoPrecioVenta;
-      }
-      
-      this.dialogRef.close(payload);
+      });
     }
   }
 }

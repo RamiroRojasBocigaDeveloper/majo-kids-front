@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+﻿import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
@@ -54,9 +54,7 @@ import { AuthService } from '../auth/auth';
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <button mat-fab color="primary" (click)="abrirDialogoProducto()" style="margin-top: -15px;" title="Nuevo Producto" *ngIf="isAdmin() || isJefe()">
-            <mat-icon>add</mat-icon>
-          </button>
+          
         </div>
       </div>
     </mat-card>
@@ -131,7 +129,7 @@ import { AuthService } from '../auth/auth';
             <td mat-cell *matCellDef="let p" class="text-center">
               <div class="action-buttons-group">
                 <button mat-stroked-button color="primary" (click)="abrirDialogoMovimiento(p)">
-                  <mat-icon>inventory_2</mat-icon> Ingresar Stock
+                  <mat-icon>tune</mat-icon> Ajuste de stock
                 </button>
                 <button mat-stroked-button color="accent" (click)="abrirDialogoProducto(p)">
                   <mat-icon>edit_note</mat-icon> Editar Producto

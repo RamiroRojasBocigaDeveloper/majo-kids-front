@@ -67,7 +67,7 @@
 .reportes-page .empty-inline { color: var(--subtle-text); font-size: 0.9rem; margin: 0; padding: 8px 0; }
 
 /* ---------- KPIs ---------- */
-.reportes-page .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.reportes-page .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
 .reportes-page .kpi-card {
   display: flex; align-items: center; gap: 14px;
   background: var(--bg-card); border: 1px solid var(--border-color);
@@ -81,6 +81,8 @@
 .reportes-page .kpi-card.accent-red::before { background: linear-gradient(180deg, #c62828, #ef5350); }
 .reportes-page .kpi-card.accent-green::before { background: linear-gradient(180deg, #2e7d32, #66bb6a); }
 .reportes-page .kpi-card.accent-violet::before { background: linear-gradient(180deg, #a97b1f, #c8a24a); }
+.reportes-page .kpi-card.accent-amber::before { background: linear-gradient(180deg, #b45309, #f59e0b); }
+.reportes-page .kpi-card.accent-blue::before { background: linear-gradient(180deg, #1565c0, #42a5f5); }
 .reportes-page .kpi-icon {
   display: flex; align-items: center; justify-content: center;
   width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
@@ -89,8 +91,11 @@
 .reportes-page .accent-red .kpi-icon { background: #ffebee; color: #c62828; }
 .reportes-page .accent-green .kpi-icon { background: #e8f5e9; color: #2e7d32; }
 .reportes-page .accent-violet .kpi-icon { background: #f7efd8; color: #a97b1f; }
+.reportes-page .accent-amber .kpi-icon { background: #fff4e0; color: #b45309; }
+.reportes-page .accent-blue .kpi-icon { background: #e3f2fd; color: #1565c0; }
 .reportes-page .kpi-info { display: flex; flex-direction: column; min-width: 0; }
 .reportes-page .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--subtle-text); }
+.reportes-page .kpi-sub { font-size: 10.5px; color: var(--subtle-text); margin-top: 2px; }
 .reportes-page .kpi-value { font-size: 1.5rem; font-weight: 800; color: var(--dark-text); letter-spacing: -0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .reportes-page .kpi-card.is-negative .kpi-value { color: #c62828; }
 

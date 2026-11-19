@@ -221,7 +221,18 @@ export class Gastos implements OnInit {
     this.loading = true;
     this.gastoService.obtenerTodos().subscribe({
       next: (data) => {
-        this.gastos.set(data);
+        const ordenados = [...data].sort((a, b) => {
+          const fechaA = new Date(a.fechaRegistroManual || a.createdAt).getTime() || 0;
+          const fechaB = new Date(b.fechaRegistroManual || b.createdAt).getTime() || 0;
+          if (fechaB !== fechaA) return fechaB - fechaA;
+
+          const registroA = new Date(a.createdAt).getTime() || 0;
+          const registroB = new Date(b.createdAt).getTime() || 0;
+          if (registroB !== registroA) return registroB - registroA;
+
+          return (b.id ?? 0) - (a.id ?? 0);
+        });
+        this.gastos.set(ordenados);
         this.loading = false;
       },
       error: () => {

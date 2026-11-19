@@ -8,6 +8,9 @@ export interface DashboardResponse {
   totalGastos: number;
   totalSueldos: number;
   gananciaNeta: number;
+  utilidadNeta: number;
+  capitalDisponible: number;
+  comprasMercancia: number;
   gananciaProductos: number;
   costoMercancia: number;
   cantidadVentas: number;
@@ -62,12 +65,15 @@ export interface InversionProducto {
 export interface EstadisticasInversionResponse {
   gastosOperativos: number;
   inversionMercanciaPeriodo: number;
+  comprasRegistradas: number;
+  entradasIniciales: number;
   saldoInicialMercancia: number;
   inversionMercanciaTotal: number;
   totalInvertidoPeriodo: number;
   totalInvertidoAcumulado: number;
   gastosOperativosPorSubcategoria: { [subcategoria: string]: number };
   comprasPorProducto: InversionProducto[];
+  entradasInicialesPorProducto: InversionProducto[];
   productosConSaldoInicial: number;
 }
 

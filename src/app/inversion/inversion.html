@@ -1,4 +1,4 @@
-<div class="inversion-page">
+﻿<div class="inversion-page">
   <mat-card class="header-card">
     <div class="header-content">
       <div class="title-group">
@@ -15,7 +15,7 @@
 
     <div class="mode-row">
       <span class="mode-chip"><mat-icon>schedule</mat-icon>Inversión acumulada desde el corte</span>
-      <span class="mode-hint">Solo se incluyen las compras nuevas y la categoría Logística para surtir.</span>
+      <span class="mode-hint">Incluye compras registradas, entradas iniciales de stock y la categoría Logística para surtir.</span>
     </div>
   </mat-card>
 
@@ -35,11 +35,20 @@
       </div>
 
       <div class="kpi-card accent-amber">
-        <div class="kpi-icon"><mat-icon>local_shipping</mat-icon></div>
+        <div class="kpi-icon"><mat-icon>shopping_basket</mat-icon></div>
         <div class="kpi-info">
-          <span class="kpi-label">Compras nuevas</span>
-          <span class="kpi-value">{{ d.inversionMercanciaPeriodo | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
-          <span class="kpi-sub">Al costo de cada entrada</span>
+          <span class="kpi-label">Compras registradas</span>
+          <span class="kpi-value">{{ d.comprasRegistradas | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
+          <span class="kpi-sub">Módulo Compras ({{ compras().length }} compra(s))</span>
+        </div>
+      </div>
+
+      <div class="kpi-card accent-blue">
+        <div class="kpi-icon"><mat-icon>add_box</mat-icon></div>
+        <div class="kpi-info">
+          <span class="kpi-label">Entradas iniciales de stock</span>
+          <span class="kpi-value">{{ d.entradasIniciales | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
+          <span class="kpi-sub">Altas de producto, no compras del módulo</span>
         </div>
       </div>
 
@@ -81,9 +90,17 @@
         <span class="formula-op">+</span>
 
         <div class="formula-box">
-          <span class="formula-label">Compras nuevas</span>
-          <strong>{{ d.inversionMercanciaPeriodo | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
-          <small>Cantidad × costo de cada entrada</small>
+          <span class="formula-label">Compras registradas</span>
+          <strong>{{ d.comprasRegistradas | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+          <small>Módulo Compras</small>
+        </div>
+
+        <span class="formula-op">+</span>
+
+        <div class="formula-box">
+          <span class="formula-label">Entradas iniciales</span>
+          <strong>{{ d.entradasIniciales | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+          <small>Stock inicial de productos</small>
         </div>
 
         <span class="formula-op">=</span>
@@ -109,12 +126,12 @@
     <div class="two-col">
       <section class="panel">
         <button class="toggle-head" (click)="showCompras.set(!showCompras())"
-                [attr.aria-expanded]="showCompras()" aria-label="Mostrar u ocultar compras nuevas por producto">
+                [attr.aria-expanded]="showCompras()" aria-label="Mostrar u ocultar compras registradas">
           <div class="section-head compact">
-            <div class="section-icon small pink"><mat-icon>shopping_bag</mat-icon></div>
+            <div class="section-icon small pink"><mat-icon>receipt_long</mat-icon></div>
             <div class="section-titles">
-              <span class="eyebrow">{{ compras().length }} producto(s)</span>
-              <h3>Compras nuevas por producto</h3>
+              <span class="eyebrow">{{ compras().length }} compra(s)</span>
+              <h3>Compras registradas</h3>
             </div>
           </div>
           <span class="action-chip" [class.open]="showCompras()">
@@ -128,6 +145,64 @@
             <table class="data-table">
               <thead>
                 <tr>
+                  <th>Fecha</th>
+                  <th>Producto / Referencia</th>
+                  <th>Proveedor</th>
+                  <th>Pago</th>
+                  <th class="text-right">Cantidad</th>
+                  <th class="text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let c of compras()">
+                  <td class="cell-date">{{ c.fecha | date:'dd/MM/yyyy':'UTC' }}</td>
+                  <td>
+                    <strong>{{ productoPrincipal(c) }}</strong>
+                    <span class="cell-sub" *ngIf="c.descripcion && c.lineas?.length">{{ c.descripcion }}</span>
+                  </td>
+                  <td>{{ c.proveedor || "—" }}</td>
+                  <td>{{ metodoLabel(c.metodoPago) }}</td>
+                  <td class="text-right">
+                    <span class="count-chip" *ngIf="c.detallada !== false && unidades(c) > 0">{{ unidades(c) }} u.</span>
+                    <span class="migrada-chip" *ngIf="c.detallada === false || unidades(c) === 0">Sin detalle</span>
+                  </td>
+                  <td class="text-right cell-money">{{ c.montoTotal | currency: 'COP' : 'symbol' : '1.0-0' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <ng-template #sinCompras>
+            <p class="empty-inline">Aún no hay compras registradas.</p>
+          </ng-template>
+
+          <a mat-button class="link-compras" routerLink="/compras-mercancia">
+            <mat-icon>open_in_new</mat-icon> Ver detalle en Compras
+          </a>
+        </div>
+      </section>
+
+      <section class="panel">
+        <button class="toggle-head" (click)="showEntradas.set(!showEntradas())"
+                [attr.aria-expanded]="showEntradas()" aria-label="Mostrar u ocultar entradas iniciales de stock">
+          <div class="section-head compact">
+            <div class="section-icon small amber"><mat-icon>inventory_2</mat-icon></div>
+            <div class="section-titles">
+              <span class="eyebrow">{{ entradasIniciales().length }} producto(s)</span>
+              <h3>Entradas iniciales de stock</h3>
+            </div>
+          </div>
+          <span class="action-chip" [class.open]="showEntradas()">
+            <span>{{ showEntradas() ? 'Ocultar detalle' : 'Ver detalle' }}</span>
+            <mat-icon>{{ showEntradas() ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </span>
+        </button>
+
+        <div class="collapse-body" *ngIf="showEntradas()">
+          <div class="table-wrap" *ngIf="entradasIniciales().length > 0; else sinEntradas">
+            <table class="data-table">
+              <thead>
+                <tr>
                   <th>Ref.</th>
                   <th>Producto</th>
                   <th class="text-right">Cantidad</th>
@@ -135,67 +210,69 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let c of compras()">
+                <tr *ngFor="let c of entradasIniciales()">
                   <td class="cell-ref">{{ c.referencia }}</td>
                   <td><strong>{{ c.nombre }}</strong></td>
                   <td class="text-right">{{ c.cantidad }} u.</td>
-                  <td class="text-right cell-money">
-                    {{ c.monto | currency: 'COP' : 'symbol' : '1.0-0' }}
-                  </td>
+                  <td class="text-right cell-money">{{ c.monto | currency: 'COP' : 'symbol' : '1.0-0' }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <ng-template #sinCompras>
-            <p class="empty-inline">Aún no hay compras nuevas registradas.</p>
+          <ng-template #sinEntradas>
+            <p class="empty-inline">No hay entradas iniciales de stock.</p>
           </ng-template>
-        </div>
-      </section>
 
-      <section class="panel">
-        <button class="toggle-head" (click)="showGastos.set(!showGastos())"
-                [attr.aria-expanded]="showGastos()" aria-label="Mostrar u ocultar gastos operativos por subcategoría">
-          <div class="section-head compact">
-            <div class="section-icon small red"><mat-icon>category</mat-icon></div>
-            <div class="section-titles">
-              <span class="eyebrow">{{ gastos().length }} subcategoría(s)</span>
-              <h3>Gastos operativos por subcategoría</h3>
-            </div>
-          </div>
-          <span class="action-chip" [class.open]="showGastos()">
-            <span>{{ showGastos() ? 'Ocultar detalle' : 'Ver detalle' }}</span>
-            <mat-icon>{{ showGastos() ? 'expand_less' : 'expand_more' }}</mat-icon>
-          </span>
-        </button>
-
-        <div class="collapse-body" *ngIf="showGastos()">
-          <div class="expense-list" *ngIf="gastos().length > 0; else sinGastos">
-            <div class="expense-row" *ngFor="let g of gastos()">
-              <div class="expense-top">
-                <span class="expense-name">{{ g.categoria }}</span>
-                <strong class="expense-monto">{{ g.monto | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
-              </div>
-              <div class="expense-bar">
-                <div class="expense-fill" [style.width.%]="g.pct"></div>
-              </div>
-            </div>
-          </div>
-
-          <ng-template #sinGastos>
-            <p class="empty-inline">Aún no hay gastos operativos registrados.</p>
-          </ng-template>
+          <p class="panel-note">Altas de producto con stock inicial; no vienen del módulo Compras.</p>
         </div>
       </section>
     </div>
 
+    <section class="panel">
+      <button class="toggle-head" (click)="showGastos.set(!showGastos())"
+              [attr.aria-expanded]="showGastos()" aria-label="Mostrar u ocultar gastos operativos por subcategoría">
+        <div class="section-head compact">
+          <div class="section-icon small red"><mat-icon>category</mat-icon></div>
+          <div class="section-titles">
+            <span class="eyebrow">{{ gastos().length }} subcategoría(s)</span>
+            <h3>Gastos operativos por subcategoría</h3>
+          </div>
+        </div>
+        <span class="action-chip" [class.open]="showGastos()">
+          <span>{{ showGastos() ? 'Ocultar detalle' : 'Ver detalle' }}</span>
+          <mat-icon>{{ showGastos() ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </span>
+      </button>
+
+      <div class="collapse-body" *ngIf="showGastos()">
+        <div class="expense-list" *ngIf="gastos().length > 0; else sinGastos">
+          <div class="expense-row" *ngFor="let g of gastos()">
+            <div class="expense-top">
+              <span class="expense-name">{{ g.categoria }}</span>
+              <strong class="expense-monto">{{ g.monto | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+            </div>
+            <div class="expense-bar">
+              <div class="expense-fill" [style.width.%]="g.pct"></div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #sinGastos>
+          <p class="empty-inline">Aún no hay gastos operativos registrados.</p>
+        </ng-template>
+      </div>
+    </section>
+
     <section class="panel note-panel">
       <mat-icon>info</mat-icon>
       <div>
-        <strong>Cómo se calcula:</strong> la inversión inicial es el valor del stock actual más la
-        mercancía ya vendida. Cada compra nueva suma su cantidad por el costo de esa entrada y no
-        revaloriza el stock anterior: si el precio de compra cambia, solo la compra nueva entra con
-        el precio nuevo. En gastos operativos solo se cuenta la categoría Logística para surtir.
+        <strong>Cómo se calcula:</strong> la inversión inicial es el valor del stock al corte.
+        Las <strong>compras registradas</strong> salen del módulo <strong>Compras</strong> y no
+        afectan la caja del vendedor. Las <strong>entradas iniciales</strong> son altas de producto
+        con stock inicial y no son compras del módulo. Las compras migradas de gastos no tienen
+        productos porque el gasto original no los detallaba. En gastos operativos solo se cuenta
+        la categoría Logística para surtir.
       </div>
     </section>
   </ng-container>

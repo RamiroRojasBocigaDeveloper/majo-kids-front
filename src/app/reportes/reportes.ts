@@ -119,27 +119,47 @@ interface MetodoPagoCard {
             <div class="kpi-info">
               <span class="kpi-label">Ventas totales</span>
               <span class="kpi-value">{{ d.totalVentas | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span class="kpi-sub">Venta bruta del período</span>
+            </div>
+          </div>
+          <div class="kpi-card accent-amber">
+            <div class="kpi-icon"><mat-icon>shopping_basket</mat-icon></div>
+            <div class="kpi-info">
+              <span class="kpi-label">Compras de mercancía</span>
+              <span class="kpi-value">{{ d.comprasMercancia | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span class="kpi-sub">Surtido (no afecta caja del vendedor)</span>
             </div>
           </div>
           <div class="kpi-card accent-red">
             <div class="kpi-icon"><mat-icon>receipt_long</mat-icon></div>
             <div class="kpi-info">
-              <span class="kpi-label">Total egresos</span>
+              <span class="kpi-label">Gastos + nómina</span>
               <span class="kpi-value">{{ (d.totalGastos || 0) + (d.totalSueldos || 0) | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span class="kpi-sub">Operación del negocio</span>
             </div>
           </div>
           <div class="kpi-card accent-green">
             <div class="kpi-icon"><mat-icon>savings</mat-icon></div>
             <div class="kpi-info">
-              <span class="kpi-label">Ganancia total</span>
+              <span class="kpi-label">Ganancia bruta</span>
               <span class="kpi-value">{{ d.gananciaProductos | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span class="kpi-sub">Ventas − costo de lo vendido</span>
             </div>
           </div>
-          <div class="kpi-card accent-violet" [class.is-negative]="d.gananciaNeta < 0">
+          <div class="kpi-card accent-blue" [class.is-negative]="d.utilidadNeta < 0">
+            <div class="kpi-icon"><mat-icon>query_stats</mat-icon></div>
+            <div class="kpi-info">
+              <span class="kpi-label">Utilidad neta</span>
+              <span class="kpi-value">{{ d.utilidadNeta | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span class="kpi-sub">Ganancia bruta − gastos − nómina</span>
+            </div>
+          </div>
+          <div class="kpi-card accent-violet" [class.is-negative]="d.capitalDisponible < 0">
             <div class="kpi-icon"><mat-icon>account_balance_wallet</mat-icon></div>
             <div class="kpi-info">
-              <span class="kpi-label">Flujo de caja neto</span>
-              <span class="kpi-value">{{ d.gananciaNeta | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span class="kpi-label">Capital disponible</span>
+              <span class="kpi-value">{{ d.capitalDisponible | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span class="kpi-sub">Ventas − gastos − nómina − compras</span>
             </div>
           </div>
         </div>
@@ -304,7 +324,7 @@ interface MetodoPagoCard {
         </section>
 
         <!-- ==================== DESGLOSE DE EGRESOS ==================== -->
-        <section class="panel" *ngIf="gastosJerarquicos().length > 0">
+        <section class="panel" *ngIf="gastosJerarquicos().length > 0 || (d.comprasMercancia || 0) > 0">
           <div class="section-head">
             <div class="section-icon red"><mat-icon>rule</mat-icon></div>
             <div class="section-titles">
@@ -323,9 +343,19 @@ interface MetodoPagoCard {
                 <span class="expense-sub-monto">{{ sub.monto | currency:'COP':'symbol':'1.0-0' }}</span>
               </div>
             </div>
+            <div class="expense-group" *ngIf="(d.comprasMercancia || 0) > 0">
+              <div class="expense-group-header">
+                <span class="expense-cat-name">Compras de mercancía</span>
+                <span class="expense-cat-total">{{ d.comprasMercancia | currency:'COP':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="expense-sub-row">
+                <span class="expense-sub-name">Surtido del almacén (no afecta caja del vendedor)</span>
+                <span class="expense-sub-monto">Inversión</span>
+              </div>
+            </div>
             <div class="expense-total-row">
-              <span>Total general de egresos</span>
-              <strong>{{ (d.totalGastos || 0) + (d.totalSueldos || 0) | currency:'COP':'symbol':'1.0-0' }}</strong>
+              <span>Total general de salidas</span>
+              <strong>{{ (d.totalGastos || 0) + (d.totalSueldos || 0) + (d.comprasMercancia || 0) | currency:'COP':'symbol':'1.0-0' }}</strong>
             </div>
           </div>
         </section>
@@ -733,10 +763,10 @@ export class Reportes implements OnInit, OnDestroy {
           this.charts.push(new Chart(ctx, {
             type: 'bar',
             data: {
-              labels: ['Ingresos', 'Egresos'],
+              labels: ['Ingresos', 'Salidas'],
               datasets: [{
                 label: 'Pesos',
-                data: [d.totalVentas, d.totalGastos + d.totalSueldos],
+                data: [d.totalVentas, d.totalGastos + d.totalSueldos + (d.comprasMercancia || 0)],
                 backgroundColor: ['#2e7d32', '#c62828'],
                 borderRadius: 12, barThickness: 56
               }]

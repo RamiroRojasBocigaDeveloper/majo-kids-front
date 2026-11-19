@@ -132,6 +132,10 @@ export class ConfirmLogoutDialog {
             <mat-icon matListItemIcon>payments</mat-icon>
             <span matListItemTitle>Gastos</span>
           </a>
+          <a mat-list-item routerLink="/compras-mercancia" routerLinkActive="active-link" *ngIf="isAdmin()" (click)="cerrarMenuSiEsCelular(drawer)">
+            <mat-icon matListItemIcon>shopping_basket</mat-icon>
+            <span matListItemTitle>Compras</span>
+          </a>
           <a mat-list-item routerLink="/reportes" routerLinkActive="active-link" *ngIf="isAdmin() || isJefe()" (click)="cerrarMenuSiEsCelular(drawer)">
             <mat-icon matListItemIcon>assessment</mat-icon>
             <span matListItemTitle>Reportes</span>
