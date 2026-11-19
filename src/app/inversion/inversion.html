@@ -30,7 +30,7 @@
         <div class="kpi-info">
           <span class="kpi-label">Inversión inicial en mercancía</span>
           <span class="kpi-value">{{ d.saldoInicialMercancia | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
-          <span class="kpi-sub">Stock actual + mercancía vendida</span>
+          <span class="kpi-sub">Valor del stock al corte inicial</span>
         </div>
       </div>
 
@@ -44,9 +44,19 @@
       </div>
 
       <div class="kpi-card accent-blue">
+        <div class="kpi-icon"><mat-icon>inventory</mat-icon></div>
+        <div class="kpi-info">
+          <span class="kpi-label">Valor del inventario actual</span>
+          <span class="kpi-value">{{ d.valorInventarioActual | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
+          <span class="kpi-sub">{{ d.productosConStock || 0 }} productos · {{ d.unidadesInventarioActual || 0 }} unidades</span>
+          <span class="kpi-sub">Valorado al último precio de compra</span>
+        </div>
+      </div>
+
+      <div class="kpi-card accent-blue" *ngIf="d.entradasIniciales > 0">
         <div class="kpi-icon"><mat-icon>add_box</mat-icon></div>
         <div class="kpi-info">
-          <span class="kpi-label">Entradas iniciales de stock</span>
+          <span class="kpi-label">Altas sin compra</span>
           <span class="kpi-value">{{ d.entradasIniciales | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
           <span class="kpi-sub">Altas de producto, no compras del módulo</span>
         </div>
@@ -64,9 +74,10 @@
       <div class="kpi-card accent-green">
         <div class="kpi-icon"><mat-icon>savings</mat-icon></div>
         <div class="kpi-info">
-          <span class="kpi-label">Total invertido</span>
+          <span class="kpi-label">Total invertido histórico</span>
           <span class="kpi-value">{{ d.totalInvertidoAcumulado | currency: 'COP' : 'symbol' : '1.0-0' }}</span>
-          <span class="kpi-sub">Inicial + compras nuevas + gastos operativos</span>
+          <span class="kpi-sub">Inicial + compras + gastos operativos</span>
+          <span class="kpi-sub">No incluye el inventario actual</span>
         </div>
       </div>
     </div>
@@ -95,13 +106,15 @@
           <small>Módulo Compras</small>
         </div>
 
-        <span class="formula-op">+</span>
+        <ng-container *ngIf="d.entradasIniciales > 0">
+          <span class="formula-op">+</span>
 
-        <div class="formula-box">
-          <span class="formula-label">Entradas iniciales</span>
-          <strong>{{ d.entradasIniciales | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
-          <small>Stock inicial de productos</small>
-        </div>
+          <div class="formula-box">
+            <span class="formula-label">Entradas iniciales</span>
+            <strong>{{ d.entradasIniciales | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+            <small>Stock inicial de productos</small>
+          </div>
+        </ng-container>
 
         <span class="formula-op">=</span>
 
@@ -113,12 +126,17 @@
       </div>
 
       <div class="history-line">
+        <span>Valor del inventario actual (stock × último precio de compra)</span>
+        <strong>{{ d.valorInventarioActual | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
+      </div>
+
+      <div class="history-line">
         <span>Gastos operativos (Logística para surtir)</span>
         <strong>{{ d.gastosOperativos | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
       </div>
 
       <div class="history-line total">
-        <span>Total invertido</span>
+        <span>Total invertido histórico</span>
         <strong>{{ d.totalInvertidoAcumulado | currency: 'COP' : 'symbol' : '1.0-0' }}</strong>
       </div>
     </section>
@@ -182,7 +200,7 @@
         </div>
       </section>
 
-      <section class="panel">
+      <section class="panel" *ngIf="entradasIniciales().length > 0">
         <button class="toggle-head" (click)="showEntradas.set(!showEntradas())"
                 [attr.aria-expanded]="showEntradas()" aria-label="Mostrar u ocultar entradas iniciales de stock">
           <div class="section-head compact">
@@ -269,10 +287,12 @@
       <div>
         <strong>Cómo se calcula:</strong> la inversión inicial es el valor del stock al corte.
         Las <strong>compras registradas</strong> salen del módulo <strong>Compras</strong> y no
-        afectan la caja del vendedor. Las <strong>entradas iniciales</strong> son altas de producto
-        con stock inicial y no son compras del módulo. Las compras migradas de gastos no tienen
-        productos porque el gasto original no los detallaba. En gastos operativos solo se cuenta
-        la categoría Logística para surtir.
+        afectan la caja del vendedor. El <strong>valor del inventario actual</strong> es el stock
+        que hoy está en el local multiplicado por el último precio de compra; es un valor de
+        reposición y no se suma al total invertido. Las <strong>entradas iniciales</strong> son
+        altas de producto con stock inicial y no son compras del módulo; solo se muestran si
+        existen. Las compras migradas de gastos no tienen productos porque el gasto original no
+        los detallaba. En gastos operativos solo se cuenta la categoría Logística para surtir.
       </div>
     </section>
   </ng-container>

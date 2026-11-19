@@ -78,7 +78,39 @@ interface MetodoPagoCard {
         <div class="header-content">
           <div class="title-group">
             <h1>Reportes</h1>
-            <p>Análisis financiero de ventas, ganancias y egresos</p>
+            <p>Capital total acumulado y análisis financiero del período</p>
+          </div>
+        </div>
+      </mat-card>
+
+      <section class="fixed-section" *ngIf="globalData() as g">
+        <div class="section-head">
+          <div class="section-icon"><mat-icon>lock_clock</mat-icon></div>
+          <div class="section-titles">
+            <span class="eyebrow">Fijo · Acumulado</span>
+            <h2>Capital total (caja neta)</h2>
+            <p class="section-sub">Incluye todo el historial y no cambia con el filtro de fechas.</p>
+          </div>
+          <span class="fixed-badge"><mat-icon>lock</mat-icon> No depende del período</span>
+        </div>
+        <div class="kpi-row single">
+          <div class="kpi-card accent-violet" [class.is-negative]="g.capitalDisponible < 0">
+            <div class="kpi-icon"><mat-icon>account_balance_wallet</mat-icon></div>
+            <div class="kpi-info">
+              <span class="kpi-label">Capital total acumulado</span>
+              <span class="kpi-value">{{ g.capitalDisponible | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span class="kpi-sub">Efectivo {{ g.cajaNetaEfectivo | currency:'COP':'symbol':'1.0-0' }} · Transferencias {{ g.cajaNetaNoEfectivo | currency:'COP':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <mat-card class="header-card period-filter-card">
+        <div class="header-content">
+          <div class="title-group section-titles">
+            <span class="eyebrow">Variable · Del período</span>
+            <h2>Análisis del período</h2>
+            <p>El filtro de fechas solo afecta las tarjetas y gráficas de esta sección.</p>
           </div>
           <div class="date-filter-group">
             <mat-form-field appearance="outline" class="date-picker-single">
@@ -117,15 +149,15 @@ interface MetodoPagoCard {
           <div class="kpi-card accent-pink">
             <div class="kpi-icon"><mat-icon>trending_up</mat-icon></div>
             <div class="kpi-info">
-              <span class="kpi-label">Ventas totales</span>
+              <span class="kpi-label">Ventas del período</span>
               <span class="kpi-value">{{ d.totalVentas | currency:'COP':'symbol':'1.0-0' }}</span>
-              <span class="kpi-sub">Venta bruta del período</span>
+              <span class="kpi-sub">Venta bruta del período seleccionado</span>
             </div>
           </div>
           <div class="kpi-card accent-amber">
             <div class="kpi-icon"><mat-icon>shopping_basket</mat-icon></div>
             <div class="kpi-info">
-              <span class="kpi-label">Compras de mercancía</span>
+              <span class="kpi-label">Compras del período</span>
               <span class="kpi-value">{{ d.comprasMercancia | currency:'COP':'symbol':'1.0-0' }}</span>
               <span class="kpi-sub">Surtido (no afecta caja del vendedor)</span>
             </div>
@@ -133,15 +165,15 @@ interface MetodoPagoCard {
           <div class="kpi-card accent-red">
             <div class="kpi-icon"><mat-icon>receipt_long</mat-icon></div>
             <div class="kpi-info">
-              <span class="kpi-label">Gastos + nómina</span>
+              <span class="kpi-label">Gastos + nómina del período</span>
               <span class="kpi-value">{{ (d.totalGastos || 0) + (d.totalSueldos || 0) | currency:'COP':'symbol':'1.0-0' }}</span>
-              <span class="kpi-sub">Operación del negocio</span>
+              <span class="kpi-sub">Operación del negocio en el período</span>
             </div>
           </div>
           <div class="kpi-card accent-green">
             <div class="kpi-icon"><mat-icon>savings</mat-icon></div>
             <div class="kpi-info">
-              <span class="kpi-label">Ganancia bruta</span>
+              <span class="kpi-label">Ganancia bruta del período</span>
               <span class="kpi-value">{{ d.gananciaProductos | currency:'COP':'symbol':'1.0-0' }}</span>
               <span class="kpi-sub">Ventas − costo de lo vendido</span>
             </div>
@@ -149,17 +181,18 @@ interface MetodoPagoCard {
           <div class="kpi-card accent-blue" [class.is-negative]="d.utilidadNeta < 0">
             <div class="kpi-icon"><mat-icon>query_stats</mat-icon></div>
             <div class="kpi-info">
-              <span class="kpi-label">Utilidad neta</span>
+              <span class="kpi-label">Utilidad neta del período</span>
               <span class="kpi-value">{{ d.utilidadNeta | currency:'COP':'symbol':'1.0-0' }}</span>
               <span class="kpi-sub">Ganancia bruta − gastos − nómina</span>
             </div>
           </div>
           <div class="kpi-card accent-violet" [class.is-negative]="d.capitalDisponible < 0">
-            <div class="kpi-icon"><mat-icon>account_balance_wallet</mat-icon></div>
+            <div class="kpi-icon"><mat-icon>calendar_month</mat-icon></div>
             <div class="kpi-info">
-              <span class="kpi-label">Capital disponible</span>
+              <span class="kpi-label">Flujo del período</span>
               <span class="kpi-value">{{ d.capitalDisponible | currency:'COP':'symbol':'1.0-0' }}</span>
-              <span class="kpi-sub">Ventas − gastos − nómina − compras</span>
+              <span class="kpi-sub">Efectivo {{ d.cajaNetaEfectivo | currency:'COP':'symbol':'1.0-0' }} · Transferencias {{ d.cajaNetaNoEfectivo | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span class="kpi-sub">Solo el rango seleccionado</span>
             </div>
           </div>
         </div>
@@ -488,6 +521,7 @@ export class Reportes implements OnInit, OnDestroy {
   });
 
   data = signal<DashboardResponse | null>(null);
+  globalData = signal<DashboardResponse | null>(null);
   loading = false;
   today = new Date();
 
@@ -545,8 +579,10 @@ export class Reportes implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.today = new Date();
       this.range.patchValue({ end: new Date() });
+      this.cargarGlobal();
       this.cargarReporte();
     });
+    this.cargarGlobal();
     this.cargarReporte();
   }
 
@@ -591,6 +627,13 @@ export class Reportes implements OnInit, OnDestroy {
         console.error('Error en reporte:', err);
         this.toast.error(msg, 'No se pudo cargar el reporte');
       }
+    });
+  }
+
+  private cargarGlobal() {
+    this.reporteService.obtenerGlobal().subscribe({
+      next: (res) => this.globalData.set(res),
+      error: (err) => console.error('Error al cargar el capital global:', err)
     });
   }
 

@@ -11,6 +11,14 @@ export interface DashboardResponse {
   utilidadNeta: number;
   capitalDisponible: number;
   comprasMercancia: number;
+  ventasEfectivo: number;
+  ventasNoEfectivo: number;
+  gastosEfectivo: number;
+  gastosNoEfectivo: number;
+  comprasEfectivo: number;
+  comprasNoEfectivo: number;
+  cajaNetaEfectivo: number;
+  cajaNetaNoEfectivo: number;
   gananciaProductos: number;
   costoMercancia: number;
   cantidadVentas: number;
@@ -71,6 +79,9 @@ export interface EstadisticasInversionResponse {
   inversionMercanciaTotal: number;
   totalInvertidoPeriodo: number;
   totalInvertidoAcumulado: number;
+  valorInventarioActual: number;
+  unidadesInventarioActual: number;
+  productosConStock: number;
   gastosOperativosPorSubcategoria: { [subcategoria: string]: number };
   comprasPorProducto: InversionProducto[];
   entradasInicialesPorProducto: InversionProducto[];

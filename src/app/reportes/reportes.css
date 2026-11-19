@@ -32,6 +32,67 @@
 .reportes-page .btn-filter mat-icon { margin-right: 4px; }
 .reportes-page .progress-container { margin-bottom: 16px; }
 
+/* ---------- Bloque fijo (no depende del período) ---------- */
+.reportes-page .fixed-section {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: var(--luxury-shadow);
+  padding: 24px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.reportes-page .fixed-section::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, #a97b1f, #c8a24a);
+}
+.reportes-page .fixed-section .section-head {
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding-left: 8px;
+}
+.reportes-page .section-titles .section-sub {
+  margin: 4px 0 0;
+  color: var(--subtle-text);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+.reportes-page .fixed-badge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f7efd8;
+  color: #8a6514;
+  border: 1px solid #e8d7a8;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+.reportes-page .fixed-badge mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+.reportes-page .kpi-row.single {
+  grid-template-columns: 1fr;
+  margin-bottom: 0;
+}
+.reportes-page .fixed-section .kpi-card {
+  background: #fffdf8;
+  border-color: #eadcc0;
+  padding-left: 24px;
+}
+.reportes-page .fixed-section .kpi-value { font-size: 2rem; }
+
 /* ---------- Secciones ---------- */
 .reportes-page .panel {
   background: var(--bg-card);
@@ -327,4 +388,8 @@
   .reportes-page .panel { padding: 16px; }
   .reportes-page .header-content { flex-direction: column; align-items: stretch; }
   .reportes-page .date-filter-group { justify-content: center; }
+  .reportes-page .fixed-section { padding: 16px; }
+  .reportes-page .fixed-section .section-head { align-items: flex-start; }
+  .reportes-page .fixed-badge { margin-left: 0; }
+  .reportes-page .fixed-section .kpi-value { font-size: 1.6rem; }
 }
